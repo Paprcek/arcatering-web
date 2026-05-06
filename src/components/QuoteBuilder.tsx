@@ -5,14 +5,21 @@ import Image from "next/image";
 import { Icon } from "./Icon";
 import type { CopyData } from "@/data/copy";
 import type { Category, ProductItem } from "@/data/products";
+import {
+  effectivePrice,
+  showsPrices,
+  showsVatNote,
+  type PricingConfig,
+} from "@/lib/pricing";
 
 interface QuoteBuilderProps {
   copy: CopyData;
   products: Category[];
   lang: string;
+  pricing: PricingConfig;
 }
 
-export function QuoteBuilder({ copy, products, lang }: QuoteBuilderProps) {
+export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProps) {
   const [cart, setCart] = useState<Record<string, number>>({});
   const [activeCat, setActiveCat] = useState(products[0].id);
   const [filter, setFilter] = useState("all");
@@ -20,13 +27,20 @@ export function QuoteBuilder({ copy, products, lang }: QuoteBuilderProps) {
   const [form, setForm] = useState({ guests: "30", date: "", notes: "", name: "", company: "", email: "", phone: "", consent: false });
   const [submitState, setSubmitState] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
+  const priced = showsPrices(pricing.tier);
+  const showVat = showsVatNote(pricing.tier);
+  const isDiscounted = pricing.tier === "disc" && pricing.discount > 0;
+
   const allItems = useMemo(() => {
     const m: Record<string, ProductItem & { catId: string; catTitle: string }> = {};
     products.forEach(c => c.items.forEach(i => { m[i.id] = { ...i, catId: c.id, catTitle: c.title }; }));
     return m;
   }, [products]);
 
-  const cartList = Object.entries(cart).filter(([, q]) => q > 0).map(([id, q]) => ({ ...allItems[id], qty: q }));
+  const cartList = Object.entries(cart).filter(([, q]) => q > 0).map(([id, q]) => {
+    const it = allItems[id];
+    return { ...it, qty: q, basePrice: it.price, price: effectivePrice(it.price, pricing) };
+  });
   const total = cartList.reduce((s, it) => s + it.price * it.qty, 0);
   const itemCount = cartList.reduce((s, it) => s + it.qty, 0);
 
@@ -50,8 +64,16 @@ export function QuoteBuilder({ copy, products, lang }: QuoteBuilderProps) {
     if (!form.consent || !form.email || !form.name || cartList.length === 0) return;
     setSubmitState("sending");
     const payload = {
-      items: cartList.map(it => ({ id: it.id, name: it.name, qty: it.qty, price: it.price, unit: it.unit })),
-      total,
+      items: cartList.map(it => ({
+        id: it.id,
+        name: it.name,
+        qty: it.qty,
+        price: priced ? it.price : null,
+        basePrice: it.basePrice,
+        unit: it.unit,
+      })),
+      total: priced ? total : null,
+      pricing: { tier: pricing.tier, discount: pricing.discount },
       event: { guests: form.guests, date: form.date, notes: form.notes },
       contact: { name: form.name, company: form.company, email: form.email, phone: form.phone },
       lang,
@@ -72,6 +94,13 @@ export function QuoteBuilder({ copy, products, lang }: QuoteBuilderProps) {
 
   const c = copy.quoteSection;
 
+  const totalNote = showVat
+    ? c.totalNote
+    : pricing.tier === "disc"
+      ? c.totalNoteDisc
+      : c.totalNoteB2c;
+  const submitLabel = priced ? c.submit : c.submitNoPrice;
+
   const tagLabel = (tag: string) => {
     if (tag === "veg") return lang === "cs" ? "Vege" : "Veg";
     if (tag === "vegan") return "Vegan";
@@ -82,6 +111,7 @@ export function QuoteBuilder({ copy, products, lang }: QuoteBuilderProps) {
 
   const ItemCard = ({ item }: { item: ProductItem }) => {
     const qty = cart[item.id] || 0;
+    const shown = effectivePrice(item.price, pricing);
     return (
       <div className={`item-card ${qty > 0 ? "has" : ""}`}>
         <div className="item-card-photo">
@@ -97,9 +127,16 @@ export function QuoteBuilder({ copy, products, lang }: QuoteBuilderProps) {
             )}
           </div>
           <div className="item-card-bottom">
-            <div className="item-card-price">
-              <b>{item.price}</b><span className="csym"> Kč</span><span className="punit">/{item.unit}</span>
-            </div>
+            {priced ? (
+              <div className="item-card-price">
+                {isDiscounted && <span className="price-original">{item.price} Kč</span>}
+                <b>{shown}</b><span className="csym"> Kč</span><span className="punit">/{item.unit}</span>
+              </div>
+            ) : (
+              <div className="item-card-price item-card-price-empty">
+                <span className="punit">{lang === "cs" ? `min. ${item.min} ${item.unit}` : `min. ${item.min} ${item.unit}`}</span>
+              </div>
+            )}
             <Stepper qty={qty} onInc={() => inc(item.id)} onDec={() => dec(item.id)} addLabel={c.add} />
           </div>
         </div>
@@ -111,7 +148,6 @@ export function QuoteBuilder({ copy, products, lang }: QuoteBuilderProps) {
 
   const cartContents = (
     <>
-      {/* HEADER — pinned top */}
       <div className="drawer-header">
         <h3 className="display-h4">{c.stickyTitle}</h3>
         <span className="drawer-count">{itemCount}</span>
@@ -125,7 +161,6 @@ export function QuoteBuilder({ copy, products, lang }: QuoteBuilderProps) {
         </div>
       ) : (
         <>
-          {/* SCROLLABLE MIDDLE — cart items + form */}
           <div className="drawer-scroll">
             {cartList.length === 0 ? (
               <div className="cart-empty">
@@ -139,8 +174,14 @@ export function QuoteBuilder({ copy, products, lang }: QuoteBuilderProps) {
                     <div className="cart-item-info">
                       <div className="cart-item-name">{it.name}</div>
                       <div className="cart-item-line">
-                        <span>{it.qty} × {it.price} Kč</span>
-                        <b>{fmt(it.qty * it.price)} Kč</b>
+                        {priced ? (
+                          <>
+                            <span>{it.qty} × {it.price} Kč</span>
+                            <b>{fmt(it.qty * it.price)} Kč</b>
+                          </>
+                        ) : (
+                          <span>{it.qty} {it.unit}</span>
+                        )}
                       </div>
                     </div>
                     <div className="cart-item-ctrls">
@@ -195,15 +236,14 @@ export function QuoteBuilder({ copy, products, lang }: QuoteBuilderProps) {
             </div>
           </div>
 
-          {/* FOOTER — pinned bottom: total + submit always visible */}
           <div className="drawer-footer">
-            {cartList.length > 0 && (
+            {priced && cartList.length > 0 && (
               <div className="cart-total">
                 <div className="cart-total-row">
                   <span className="muted">{c.total}</span>
                   <b className="cart-total-num">{fmt(total)} Kč</b>
                 </div>
-                <p className="muted total-note">{c.totalNote}</p>
+                <p className="muted total-note">{totalNote}</p>
               </div>
             )}
             <button
@@ -211,7 +251,7 @@ export function QuoteBuilder({ copy, products, lang }: QuoteBuilderProps) {
               disabled={submitState === "sending" || !form.consent || !form.email || !form.name || cartList.length === 0}
               onClick={handleSubmit}
             >
-              {submitState === "sending" ? c.sending : c.submit}
+              {submitState === "sending" ? c.sending : submitLabel}
               {submitState !== "sending" && <Icon name="arrow" size={14} />}
             </button>
             {submitState === "error" && (
@@ -281,7 +321,7 @@ export function QuoteBuilder({ copy, products, lang }: QuoteBuilderProps) {
         <button className={`mobile-cart-fab ${drawerOpen ? "open" : ""}`} onClick={() => setDrawerOpen(o => !o)}>
           <Icon name="cart" size={16} />
           <span>{itemCount} {lang === "cs" ? "pol." : "items"}</span>
-          <b>{total.toLocaleString(lang === "cs" ? "cs-CZ" : "en-US")} Kč</b>
+          {priced && <b>{total.toLocaleString(lang === "cs" ? "cs-CZ" : "en-US")} Kč</b>}
         </button>
       )}
       {drawerOpen && (

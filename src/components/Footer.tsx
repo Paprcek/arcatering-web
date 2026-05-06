@@ -1,7 +1,9 @@
 import Image from "next/image";
 import type { CopyData } from "@/data/copy";
+import { showsVatNote, type PricingTier } from "@/lib/pricing";
 
-export function Footer({ copy }: { copy: CopyData }) {
+export function Footer({ copy, tier = "none" }: { copy: CopyData; tier?: PricingTier }) {
+  const legal = showsVatNote(tier) ? copy.footer.legal : copy.footer.legalNoVat;
   return (
     <footer id="footer" className="footer">
       <div className="container footer-grid">
@@ -30,7 +32,7 @@ export function Footer({ copy }: { copy: CopyData }) {
         </div>
       </div>
       <div className="container footer-legal">
-        <span className="muted small">{copy.footer.legal}</span>
+        <span className="muted small">{legal}</span>
       </div>
     </footer>
   );

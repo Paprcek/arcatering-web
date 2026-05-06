@@ -32,7 +32,10 @@ export const COPY: Record<string, CopyData> = {
       empty: "Zatím prázdno — přidejte první položku z nabídky.",
       total: "Orientační součet",
       totalNote: "Konečnou cenu potvrdíme v nabídce. Bez DPH.",
+      totalNoteB2c: "Konečnou cenu potvrdíme v nabídce.",
+      totalNoteDisc: "Ceny po individuální slevě. Konečnou cenu potvrdíme v nabídce.",
       submit: "Odeslat poptávku",
+      submitNoPrice: "Odeslat nezávaznou poptávku",
       sending: "Odesílám…",
       sent: "Odesláno. Ozveme se do 60 minut.",
       formGuests: "Počet hostů",
@@ -82,7 +85,8 @@ export const COPY: Record<string, CopyData> = {
       addr: "AR Catering s.r.o.\nKřížíkova 16, 186 00 Praha 8",
       hours: "Po–Pá 8:00–17:00",
       contact: "Kontakt",
-      legal: "© 2026 AR Catering s.r.o. — IČO 12345678. Vše v ceně bez DPH, pokud není uvedeno jinak."
+      legal: "© 2026 AR Catering s.r.o. — IČO 12345678. Vše v ceně bez DPH, pokud není uvedeno jinak.",
+      legalNoVat: "© 2026 AR Catering s.r.o. — IČO 12345678."
     },
     footerCta: {
       title: "Plánujete akci v Praze?",
@@ -123,7 +127,10 @@ export const COPY: Record<string, CopyData> = {
       empty: "Empty for now — add your first item from the menu.",
       total: "Indicative total",
       totalNote: "Final price confirmed in the proposal. VAT excluded.",
+      totalNoteB2c: "Final price confirmed in the proposal.",
+      totalNoteDisc: "Prices include your individual discount. Final price confirmed in the proposal.",
       submit: "Send quote request",
+      submitNoPrice: "Send enquiry",
       sending: "Sending…",
       sent: "Sent. We'll be in touch within 60 minutes.",
       formGuests: "Number of guests",
@@ -173,7 +180,8 @@ export const COPY: Record<string, CopyData> = {
       addr: "AR Catering s.r.o.\nKřížíkova 16, 186 00 Prague 8",
       hours: "Mon–Fri 8:00–17:00",
       contact: "Contact",
-      legal: "© 2026 AR Catering s.r.o. — Company ID 12345678. All prices VAT excluded unless stated."
+      legal: "© 2026 AR Catering s.r.o. — Company ID 12345678. All prices VAT excluded unless stated.",
+      legalNoVat: "© 2026 AR Catering s.r.o. — Company ID 12345678."
     },
     footerCta: {
       title: "Planning an event in Prague?",
@@ -212,7 +220,10 @@ export interface CopyData {
     empty: string;
     total: string;
     totalNote: string;
+    totalNoteB2c: string;
+    totalNoteDisc: string;
     submit: string;
+    submitNoPrice: string;
     sending: string;
     sent: string;
     formGuests: string;
@@ -251,6 +262,7 @@ export interface CopyData {
     hours: string;
     contact: string;
     legal: string;
+    legalNoVat: string;
   };
   footerCta: {
     title: string;
