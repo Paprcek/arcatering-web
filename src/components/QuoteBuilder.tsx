@@ -276,6 +276,13 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
 
         <div className="quote-shell with-drawer">
           <div className="quote-catalog">
+            <div className="custom-note">
+              <div className="custom-note-icon"><Icon name="plus" size={14} /></div>
+              <div className="custom-note-body">
+                <b>{c.customNoteTitle}</b>
+                <span>{c.customNoteBody}</span>
+              </div>
+            </div>
             <div className="catalog-controls">
               <nav className="cat-tabs" aria-label="Categories">
                 {products.map(cat => (
