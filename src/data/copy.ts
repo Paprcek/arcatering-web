@@ -4,12 +4,12 @@ export const COPY: Record<string, CopyData> = {
     hero: {
       eyebrow: "Catering pro firemní akce v Praze a okolí · rodinná firma od 2008",
       title: ["Občerstvení,", "které ", "rozhodne", " o úspěchu vaší akce."],
-      lead: "Specializujeme se na školení, meetingy, klientské návštěvy a firemní oslavy. Sestavte si poptávku za 2 minuty — ozveme se co nejdříve.",
+      lead: "Specializujeme se na školení, meetingy, klientské návštěvy a firemní oslavy. Sestavte si poptávku za 2 minuty — ozveme se do hodiny v pracovní době.",
       ctaPrimary: "Sestavit poptávku",
       ctaSecondary: "Prohlédnout sortiment",
       stat1: ["17+", "let na pražském trhu"],
       stat2: ["1 800+", "zrealizovaných akcí"],
-      stat3: ["ASAP", "ozveme se co nejdříve"],
+      stat3: ["< 60 min", "odezva v pracovní době"],
       tags: ["školení", "semináře", "meetingy", "klientské návštěvy", "firemní večírky", "oslavy"]
     },
     promise: {
@@ -42,7 +42,7 @@ export const COPY: Record<string, CopyData> = {
       submit: "Odeslat poptávku",
       submitNoPrice: "Odeslat nezávaznou poptávku",
       sending: "Odesílám…",
-      sent: "Odesláno. Ozveme se co nejdříve.",
+      sent: "Odesláno. Ozveme se do hodiny.",
       formGuests: "Počet hostů",
       formDate: "Datum a čas akce",
       formNotes: "Poznámka (alergeny, místo, formát akce…)",
@@ -80,7 +80,7 @@ export const COPY: Record<string, CopyData> = {
       title: "Od poptávky k pohoštění za 4 kroky.",
       steps: [
         { n: "1", t: "Pošlete poptávku", b: "Sestavte si vlastní výběr nebo nám napište, co řešíte. Stačí pár minut." },
-        { n: "2", t: "Odpovíme co nejdříve", b: "Zavoláme nebo napíšeme, doladíme detaily a pošleme cenovou nabídku." },
+        { n: "2", t: "Odpovíme do hodiny", b: "Zavoláme nebo napíšeme, doladíme detaily a cenovou nabídku připravíme co nejdříve." },
         { n: "3", t: "Potvrdíte a my vaříme", b: "Po potvrzení nakoupíme čerstvé suroviny a den před akcí vše chystáme." },
         { n: "4", t: "Doručíme, naservírujeme, odvezeme", b: "Včas, na klíč. Po akci si použité nádobí odvezeme zpět." }
       ]
@@ -95,7 +95,7 @@ export const COPY: Record<string, CopyData> = {
     },
     footerCta: {
       title: "Plánujete akci v Praze nebo okolí?",
-      lead: "Sestavte si poptávku za pár minut, nebo nám rovnou napište. Ozveme se co nejdříve.",
+      lead: "Sestavte si poptávku za pár minut, nebo nám rovnou napište. Odpovíme do hodiny v pracovní době.",
       cta: "Sestavit poptávku"
     }
   },
@@ -104,12 +104,12 @@ export const COPY: Record<string, CopyData> = {
     hero: {
       eyebrow: "Corporate catering in Prague & surroundings · family business since 2008",
       title: ["Catering", "that ", "elevates", " your event."],
-      lead: "We specialise in trainings, meetings, client visits and company parties. Build your quote in 2 minutes — we'll get back to you as soon as possible.",
+      lead: "We specialise in trainings, meetings, client visits and company parties. Build your quote in 2 minutes — we reply within an hour during office hours.",
       ctaPrimary: "Build a quote",
       ctaSecondary: "Browse menu",
       stat1: ["17+", "years on the Prague market"],
       stat2: ["1,800+", "events delivered"],
-      stat3: ["ASAP", "we reply quickly"],
+      stat3: ["< 60 min", "reply time, business hours"],
       tags: ["trainings", "seminars", "meetings", "client visits", "company parties", "celebrations"]
     },
     promise: {
@@ -142,7 +142,7 @@ export const COPY: Record<string, CopyData> = {
       submit: "Send quote request",
       submitNoPrice: "Send enquiry",
       sending: "Sending…",
-      sent: "Sent. We'll be in touch as soon as possible.",
+      sent: "Sent. We'll be in touch within an hour.",
       formGuests: "Number of guests",
       formDate: "Event date & time",
       formNotes: "Notes (allergens, venue, event format…)",
@@ -180,7 +180,7 @@ export const COPY: Record<string, CopyData> = {
       title: "From enquiry to event in 4 steps.",
       steps: [
         { n: "1", t: "Send your enquiry", b: "Build your own selection or just tell us what you're planning. Two minutes is enough." },
-        { n: "2", t: "We reply as soon as possible", b: "We'll call or write, refine the details and send a priced proposal." },
+        { n: "2", t: "We reply within an hour", b: "We'll call or write, refine the details and send a priced proposal as soon as possible." },
         { n: "3", t: "You confirm, we cook", b: "Once confirmed we buy fresh ingredients and start prep the day before." },
         { n: "4", t: "Deliver, set up, clear away", b: "On time, turnkey. We collect everything used after the event." }
       ]
@@ -195,7 +195,7 @@ export const COPY: Record<string, CopyData> = {
     },
     footerCta: {
       title: "Planning an event in Prague or nearby?",
-      lead: "Build your quote in minutes, or write to us directly. We'll get back to you as soon as possible.",
+      lead: "Build your quote in minutes, or write to us directly. We reply within an hour during office hours.",
       cta: "Build a quote"
     }
   }
