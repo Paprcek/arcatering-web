@@ -197,16 +197,16 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
               <div className="form-row two">
                 <label className="field" htmlFor="qf-guests">
                   <span className="field-label">{c.formGuests}</span>
-                  <input id="qf-guests" name="guests" type="number" min="1" inputMode="numeric" autoComplete="off" value={form.guests} onChange={e => setForm({ ...form, guests: e.target.value })} />
+                  <input id="qf-guests" name="guests" type="number" min="1" inputMode="numeric" value={form.guests} onChange={e => setForm({ ...form, guests: e.target.value })} />
                 </label>
                 <label className="field" htmlFor="qf-date">
                   <span className="field-label">{c.formDate}</span>
-                  <input id="qf-date" name="date" type="datetime-local" autoComplete="off" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} />
+                  <input id="qf-date" name="date" type="datetime-local" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} />
                 </label>
               </div>
               <label className="field" htmlFor="qf-notes">
                 <span className="field-label">{c.formNotes}</span>
-                <textarea id="qf-notes" name="notes" rows={2} placeholder={c.formNotesPh} autoComplete="off" value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} />
+                <textarea id="qf-notes" name="notes" rows={2} placeholder={c.formNotesPh} value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} />
               </label>
               <div className="form-divider"></div>
               <div className="form-row two">

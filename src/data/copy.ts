@@ -7,7 +7,7 @@ export const COPY: Record<string, CopyData> = {
       lead: "Specializujeme se na školení, meetingy, klientské návštěvy a firemní oslavy. Sestavte si poptávku za 2 minuty — ozveme se do hodiny v pracovní době.",
       ctaPrimary: "Sestavit poptávku",
       ctaSecondary: "Prohlédnout sortiment",
-      stat1: ["17+", "let na pražském trhu"],
+      stat1: ["18+", "let na pražském trhu"],
       stat2: ["1 800+", "zrealizovaných akcí"],
       stat3: ["< 60 min", "odezva v pracovní době"],
       tags: ["školení", "semináře", "meetingy", "klientské návštěvy", "firemní večírky", "oslavy"]
@@ -107,7 +107,7 @@ export const COPY: Record<string, CopyData> = {
       lead: "We specialise in trainings, meetings, client visits and company parties. Build your quote in 2 minutes — we reply within an hour during office hours.",
       ctaPrimary: "Build a quote",
       ctaSecondary: "Browse menu",
-      stat1: ["17+", "years on the Prague market"],
+      stat1: ["18+", "years on the Prague market"],
       stat2: ["1,800+", "events delivered"],
       stat3: ["< 60 min", "reply time, business hours"],
       tags: ["trainings", "seminars", "meetings", "client visits", "company parties", "celebrations"]

@@ -63,6 +63,11 @@ const jsonLd = {
         postalCode: "186 00",
         addressCountry: "CZ",
       },
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: 50.0942,
+        longitude: 14.4517,
+      },
       areaServed: [
         { "@type": "City", name: "Praha" },
         { "@type": "AdministrativeArea", name: "Středočeský kraj" },
@@ -76,7 +81,9 @@ const jsonLd = {
         },
       ],
       servesCuisine: ["Czech", "European", "International"],
-      sameAs: [],
+      sameAs: [
+        "https://www.arcatering.cz",
+      ],
       hasOfferCatalog: {
         "@type": "OfferCatalog",
         name: "Catering nabídka",
