@@ -2,7 +2,7 @@ export const COPY: Record<string, CopyData> = {
   cs: {
     nav: { menu: "Sortiment", how: "Jak to funguje", reference: "Reference", contact: "Kontakt", quote: "Nezávazná poptávka" },
     hero: {
-      eyebrow: "Catering pro firemní akce v Praze · rodinná firma od 2008",
+      eyebrow: "Catering pro firemní akce v Praze a okolí · rodinná firma od 2008",
       title: ["Občerstvení,", "které ", "rozhodne", " o úspěchu vaší akce."],
       lead: "Specializujeme se na školení, meetingy, klientské návštěvy a firemní oslavy. Sestavte si poptávku za 2 minuty — ozveme se co nejdříve.",
       ctaPrimary: "Sestavit poptávku",
@@ -86,7 +86,7 @@ export const COPY: Record<string, CopyData> = {
       ]
     },
     footer: {
-      tagline: "Catering & dodávky občerstvení pro firemní akce v Praze.",
+      tagline: "Catering & dodávky občerstvení pro firemní akce v Praze a okolí.",
       addr: "AR Catering s.r.o.\nKřížíkova 16, 186 00 Praha 8",
       hours: "Po–Pá 8:00–17:00",
       contact: "Kontakt",
@@ -94,7 +94,7 @@ export const COPY: Record<string, CopyData> = {
       legalNoVat: "© 2026 AR Catering s.r.o. — IČO 12345678."
     },
     footerCta: {
-      title: "Plánujete akci v Praze?",
+      title: "Plánujete akci v Praze nebo okolí?",
       lead: "Sestavte si poptávku za pár minut, nebo nám rovnou napište. Ozveme se co nejdříve.",
       cta: "Sestavit poptávku"
     }
@@ -102,7 +102,7 @@ export const COPY: Record<string, CopyData> = {
   en: {
     nav: { menu: "Menu", how: "How it works", reference: "Clients", contact: "Contact", quote: "Get a quote" },
     hero: {
-      eyebrow: "Corporate catering in Prague · family business since 2008",
+      eyebrow: "Corporate catering in Prague & surroundings · family business since 2008",
       title: ["Catering", "that ", "elevates", " your event."],
       lead: "We specialise in trainings, meetings, client visits and company parties. Build your quote in 2 minutes — we'll get back to you as soon as possible.",
       ctaPrimary: "Build a quote",
@@ -186,7 +186,7 @@ export const COPY: Record<string, CopyData> = {
       ]
     },
     footer: {
-      tagline: "Catering & food delivery for corporate events in Prague.",
+      tagline: "Catering & food delivery for corporate events in Prague & surroundings.",
       addr: "AR Catering s.r.o.\nKřížíkova 16, 186 00 Prague 8",
       hours: "Mon–Fri 8:00–17:00",
       contact: "Contact",
@@ -194,7 +194,7 @@ export const COPY: Record<string, CopyData> = {
       legalNoVat: "© 2026 AR Catering s.r.o. — Company ID 12345678."
     },
     footerCta: {
-      title: "Planning an event in Prague?",
+      title: "Planning an event in Prague or nearby?",
       lead: "Build your quote in minutes, or write to us directly. We'll get back to you as soon as possible.",
       cta: "Build a quote"
     }
