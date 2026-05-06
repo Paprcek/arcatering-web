@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AR Catering — Firemní catering Praha",
-  description: "Catering pro firemní akce v Praze. Rauty, meetingy, večírky. Sestavte si poptávku za 2 minuty.",
+  title: "AR Catering — Firemní catering Praha a okolí",
+  description: "Catering pro firemní akce v Praze a okolí. Školení, meetingy, večírky. Sestavte si poptávku za 2 minuty.",
 };
 
 export default function RootLayout({
