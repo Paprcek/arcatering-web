@@ -4,12 +4,12 @@ export const COPY: Record<string, CopyData> = {
     hero: {
       eyebrow: "Catering pro firemní akce v Praze · rodinná firma od 2008",
       title: ["Občerstvení,", "které ", "rozhodne", " o úspěchu vaší akce."],
-      lead: "Specializujeme se na školení, meetingy, klientské návštěvy a firemní oslavy. Sestavte si poptávku za 2 minuty — odpovíme do hodiny v pracovní době.",
+      lead: "Specializujeme se na školení, meetingy, klientské návštěvy a firemní oslavy. Sestavte si poptávku za 2 minuty — ozveme se co nejdříve.",
       ctaPrimary: "Sestavit poptávku",
       ctaSecondary: "Prohlédnout sortiment",
       stat1: ["17+", "let na pražském trhu"],
       stat2: ["1 800+", "zrealizovaných akcí"],
-      stat3: ["< 60 min", "odezva v pracovní době"],
+      stat3: ["ASAP", "ozveme se co nejdříve"],
       tags: ["školení", "semináře", "meetingy", "klientské návštěvy", "firemní večírky", "oslavy"]
     },
     promise: {
@@ -27,7 +27,7 @@ export const COPY: Record<string, CopyData> = {
     quoteSection: {
       eyebrow: "Nezávazná poptávka",
       title: "Sestavte si vlastní občerstvení.",
-      lead: "Vyberte položky, řekněte nám kdy a pro kolik lidí. Cenovou nabídku připravíme do 60 minut v pracovní době.",
+      lead: "Vyberte položky, řekněte nám kdy a pro kolik lidí. Cenovou nabídku připravíme co nejdříve.",
       customNoteTitle: "Něco, co tu není?",
       customNoteBody: "Káva, alko, nealko, custom dezerty, speciální diety nebo dort s logem — napište nám to v poznámce, naceníme.",
       step1: "Vyberte položky",
@@ -42,7 +42,7 @@ export const COPY: Record<string, CopyData> = {
       submit: "Odeslat poptávku",
       submitNoPrice: "Odeslat nezávaznou poptávku",
       sending: "Odesílám…",
-      sent: "Odesláno. Ozveme se do 60 minut.",
+      sent: "Odesláno. Ozveme se co nejdříve.",
       formGuests: "Počet hostů",
       formDate: "Datum a čas akce",
       formNotes: "Poznámka (alergeny, místo, formát akce…)",
@@ -80,7 +80,7 @@ export const COPY: Record<string, CopyData> = {
       title: "Od poptávky k pohoštění za 4 kroky.",
       steps: [
         { n: "1", t: "Pošlete poptávku", b: "Sestavte si vlastní výběr nebo nám napište, co řešíte. Stačí pár minut." },
-        { n: "2", t: "Odpovíme do hodiny", b: "Zavoláme nebo napíšeme, doladíme detaily a pošleme cenovou nabídku." },
+        { n: "2", t: "Odpovíme co nejdříve", b: "Zavoláme nebo napíšeme, doladíme detaily a pošleme cenovou nabídku." },
         { n: "3", t: "Potvrdíte a my vaříme", b: "Po potvrzení nakoupíme čerstvé suroviny a den před akcí vše chystáme." },
         { n: "4", t: "Doručíme, naservírujeme, odvezeme", b: "Včas, na klíč. Po akci si použité nádobí odvezeme zpět." }
       ]
@@ -95,7 +95,7 @@ export const COPY: Record<string, CopyData> = {
     },
     footerCta: {
       title: "Plánujete akci v Praze?",
-      lead: "Sestavte si poptávku za pár minut, nebo nám rovnou napište. Odpovíme do 60 minut v pracovní době.",
+      lead: "Sestavte si poptávku za pár minut, nebo nám rovnou napište. Ozveme se co nejdříve.",
       cta: "Sestavit poptávku"
     }
   },
@@ -104,12 +104,12 @@ export const COPY: Record<string, CopyData> = {
     hero: {
       eyebrow: "Corporate catering in Prague · family business since 2008",
       title: ["Catering", "that ", "elevates", " your event."],
-      lead: "We specialise in trainings, meetings, client visits and company parties. Build your quote in 2 minutes — we reply within an hour during office hours.",
+      lead: "We specialise in trainings, meetings, client visits and company parties. Build your quote in 2 minutes — we'll get back to you as soon as possible.",
       ctaPrimary: "Build a quote",
       ctaSecondary: "Browse menu",
       stat1: ["17+", "years on the Prague market"],
       stat2: ["1,800+", "events delivered"],
-      stat3: ["< 60 min", "reply time, business hours"],
+      stat3: ["ASAP", "we reply quickly"],
       tags: ["trainings", "seminars", "meetings", "client visits", "company parties", "celebrations"]
     },
     promise: {
@@ -127,7 +127,7 @@ export const COPY: Record<string, CopyData> = {
     quoteSection: {
       eyebrow: "Get a quote",
       title: "Build your own catering.",
-      lead: "Pick what you'd like, tell us when and for how many. We'll send a price within 60 minutes during office hours.",
+      lead: "Pick what you'd like, tell us when and for how many. We'll send a price as soon as possible.",
       customNoteTitle: "Looking for something not on the list?",
       customNoteBody: "Coffee, alcohol, soft drinks, custom desserts, special diets, branded cakes — note it in the form and we'll come back with a price.",
       step1: "Pick items",
@@ -142,7 +142,7 @@ export const COPY: Record<string, CopyData> = {
       submit: "Send quote request",
       submitNoPrice: "Send enquiry",
       sending: "Sending…",
-      sent: "Sent. We'll be in touch within 60 minutes.",
+      sent: "Sent. We'll be in touch as soon as possible.",
       formGuests: "Number of guests",
       formDate: "Event date & time",
       formNotes: "Notes (allergens, venue, event format…)",
@@ -180,7 +180,7 @@ export const COPY: Record<string, CopyData> = {
       title: "From enquiry to event in 4 steps.",
       steps: [
         { n: "1", t: "Send your enquiry", b: "Build your own selection or just tell us what you're planning. Two minutes is enough." },
-        { n: "2", t: "We reply within an hour", b: "We'll call or write, refine the details and send a priced proposal." },
+        { n: "2", t: "We reply as soon as possible", b: "We'll call or write, refine the details and send a priced proposal." },
         { n: "3", t: "You confirm, we cook", b: "Once confirmed we buy fresh ingredients and start prep the day before." },
         { n: "4", t: "Deliver, set up, clear away", b: "On time, turnkey. We collect everything used after the event." }
       ]
@@ -195,7 +195,7 @@ export const COPY: Record<string, CopyData> = {
     },
     footerCta: {
       title: "Planning an event in Prague?",
-      lead: "Build your quote in minutes, or write to us directly. We reply within 60 minutes during office hours.",
+      lead: "Build your quote in minutes, or write to us directly. We'll get back to you as soon as possible.",
       cta: "Build a quote"
     }
   }
