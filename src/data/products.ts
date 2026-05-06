@@ -1,6 +1,8 @@
 export interface ProductItem {
   id: string;
   photo: string;
+  /** Cloudinary URL synced from Zoho Creator field `urlPic`. Takes precedence over `photo` when present. */
+  urlPic?: string;
   name: string;
   price: number;
   unit: string;

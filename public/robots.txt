@@ -1,0 +1,7 @@
+# AR Catering — robots
+# All search engines and known AI crawlers welcome.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://arcatering-web.vercel.app/sitemap.xml

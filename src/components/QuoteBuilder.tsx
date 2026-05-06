@@ -115,7 +115,7 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
     return (
       <div className={`item-card ${qty > 0 ? "has" : ""}`}>
         <div className="item-card-photo">
-          <Image src={item.photo} alt={item.name} width={250} height={187} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
+          <Image src={item.urlPic ?? item.photo} alt={item.name} width={250} height={187} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
         </div>
         <div className="item-card-body">
           <div className="item-card-top">
@@ -193,47 +193,47 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
               </ul>
             )}
 
-            <div className="quote-form">
+            <form className="quote-form" onSubmit={(e) => e.preventDefault()}>
               <div className="form-row two">
-                <label className="field">
+                <label className="field" htmlFor="qf-guests">
                   <span className="field-label">{c.formGuests}</span>
-                  <input type="number" min="1" value={form.guests} onChange={e => setForm({ ...form, guests: e.target.value })} />
+                  <input id="qf-guests" name="guests" type="number" min="1" inputMode="numeric" autoComplete="off" value={form.guests} onChange={e => setForm({ ...form, guests: e.target.value })} />
                 </label>
-                <label className="field">
+                <label className="field" htmlFor="qf-date">
                   <span className="field-label">{c.formDate}</span>
-                  <input type="datetime-local" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} />
+                  <input id="qf-date" name="date" type="datetime-local" autoComplete="off" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} />
                 </label>
               </div>
-              <label className="field">
+              <label className="field" htmlFor="qf-notes">
                 <span className="field-label">{c.formNotes}</span>
-                <textarea rows={2} placeholder={c.formNotesPh} value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} />
+                <textarea id="qf-notes" name="notes" rows={2} placeholder={c.formNotesPh} autoComplete="off" value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} />
               </label>
               <div className="form-divider"></div>
               <div className="form-row two">
-                <label className="field">
+                <label className="field" htmlFor="qf-name">
                   <span className="field-label">{c.formName}<em> *</em></span>
-                  <input type="text" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
+                  <input id="qf-name" name="name" type="text" autoComplete="name" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
                 </label>
-                <label className="field">
+                <label className="field" htmlFor="qf-company">
                   <span className="field-label">{c.formCompany}</span>
-                  <input type="text" value={form.company} onChange={e => setForm({ ...form, company: e.target.value })} />
+                  <input id="qf-company" name="company" type="text" autoComplete="organization" value={form.company} onChange={e => setForm({ ...form, company: e.target.value })} />
                 </label>
               </div>
               <div className="form-row two">
-                <label className="field">
+                <label className="field" htmlFor="qf-email">
                   <span className="field-label">{c.formEmail}<em> *</em></span>
-                  <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+                  <input id="qf-email" name="email" type="email" autoComplete="email" inputMode="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
                 </label>
-                <label className="field">
+                <label className="field" htmlFor="qf-phone">
                   <span className="field-label">{c.formPhone}</span>
-                  <input type="tel" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
+                  <input id="qf-phone" name="phone" type="tel" autoComplete="tel" inputMode="tel" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
                 </label>
               </div>
-              <label className="consent">
-                <input type="checkbox" checked={form.consent} onChange={e => setForm({ ...form, consent: e.target.checked })} />
+              <label className="consent" htmlFor="qf-consent">
+                <input id="qf-consent" name="consent" type="checkbox" required checked={form.consent} onChange={e => setForm({ ...form, consent: e.target.checked })} />
                 <span>{c.consent}</span>
               </label>
-            </div>
+            </form>
           </div>
 
           <div className="drawer-footer">

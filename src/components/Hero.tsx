@@ -7,9 +7,9 @@ export function Hero({ copy }: { copy: CopyData }) {
   return (
     <section id="top" className="hero hero-dark">
       <div className="hero-bg">
-        <div className="hero-photo hero-photo-l"><Image src="/images/food/spoon-canapes.jpg" alt="" width={250} height={227} /></div>
-        <div className="hero-photo hero-photo-r"><Image src="/images/food/grill-platter.jpg" alt="" width={250} height={200} /></div>
-        <div className="hero-photo hero-photo-bl"><Image src="/images/food/tiramisu.jpg" alt="" width={250} height={250} /></div>
+        <div className="hero-photo hero-photo-l"><Image src="/images/food/spoon-canapes.jpg" alt="Studené finger food — kanapky na lžících servírované na rautu" width={250} height={227} /></div>
+        <div className="hero-photo hero-photo-r"><Image src="/images/food/grill-platter.jpg" alt="Grilovací plato s masem a zeleninou" width={250} height={200} /></div>
+        <div className="hero-photo hero-photo-bl"><Image src="/images/food/tiramisu.jpg" alt="Mini dezerty — porce tiramisu na stříbrném podnose" width={250} height={250} /></div>
       </div>
       <div className="container hero-inner">
         <div className="hero-eyebrow">
