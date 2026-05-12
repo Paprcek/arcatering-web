@@ -236,6 +236,22 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .how-num { font-family: var(--display); font-size: 48px; line-height: 0.9; color: var(--fg); letter-spacing: -0.02em; }
 .how-body p { margin: 0; font-size: 14px; line-height: 1.55; }
 
+/* --- FAQ --- */
+.faq { padding: 96px 0; background: var(--bg); }
+.faq-list { display: flex; flex-direction: column; gap: 12px; max-width: 880px; margin: 0 auto; }
+.faq-item { background: var(--card); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; transition: border-color 200ms ease; }
+.faq-item:hover { border-color: var(--accent); }
+.faq-item details > summary { list-style: none; cursor: pointer; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 20px 24px; }
+.faq-item details > summary::-webkit-details-marker { display: none; }
+.faq-item details[open] > summary { border-bottom: 1px solid var(--line); }
+.faq-q { margin: 0; font-size: 16px; line-height: 1.4; font-weight: 600; }
+.faq-toggle { font-family: var(--display); font-size: 24px; line-height: 1; color: var(--accent-deep); flex-shrink: 0; transition: transform 200ms ease; }
+.faq-item details[open] .faq-toggle { transform: rotate(45deg); }
+.faq-a { margin: 0; padding: 18px 24px 24px; color: var(--muted); font-size: 14.5px; line-height: 1.65; text-wrap: pretty; }
+.faq-cta { text-align: center; margin-top: 32px; font-size: 14px; }
+.faq-cta a { color: var(--accent-deep); font-weight: 600; }
+.faq-cta a:hover { text-decoration: underline; }
+
 /* --- References --- */
 .refs { padding: 96px 0; }
 .logo-strip {

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { COPY } from "@/data/copy";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -121,6 +122,19 @@ const jsonLd = {
       name: "AR Catering",
       inLanguage: "cs-CZ",
       publisher: { "@id": `${SITE_URL}/#business` },
+    },
+    {
+      "@type": "FAQPage",
+      "@id": `${SITE_URL}/#faq`,
+      inLanguage: "cs-CZ",
+      mainEntity: COPY.cs.faq.items.map((item) => ({
+        "@type": "Question",
+        name: item.q,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: item.a,
+        },
+      })),
     },
   ],
 };

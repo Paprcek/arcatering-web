@@ -1,6 +1,6 @@
 export const COPY: Record<string, CopyData> = {
   cs: {
-    nav: { menu: "Sortiment", how: "Jak to funguje", reference: "Reference", contact: "Kontakt", quote: "Nezávazná poptávka" },
+    nav: { menu: "Sortiment", how: "Jak to funguje", faq: "Časté dotazy", reference: "Reference", contact: "Kontakt", quote: "Nezávazná poptávka" },
     hero: {
       eyebrow: "Catering pro firemní akce v Praze a okolí · rodinná firma od 2008",
       title: ["Občerstvení,", "které ", "rozhodne", " o úspěchu vaší akce."],
@@ -85,6 +85,44 @@ export const COPY: Record<string, CopyData> = {
         { n: "4", t: "Doručíme, naservírujeme, odvezeme", b: "Včas, na klíč. Po akci si použité nádobí odvezeme zpět." }
       ]
     },
+    faq: {
+      eyebrow: "Časté dotazy",
+      title: "Na co se zákazníci nejčastěji ptají.",
+      items: [
+        {
+          q: "Jak rychle dostanu cenovou nabídku?",
+          a: "Na příchozí poptávku reagujeme do hodiny v pracovní době (pondělí–pátek 8:00–17:00). Pokud poptáváte složitější akci (raut nad 100 hostů, více chodů, custom položky), cenovou nabídku připravíme co nejdříve — typicky během dne. U jednodušších objednávek (coffee break, sendvičové občerstvení) vám pošleme kalkulaci v řádu desítek minut."
+        },
+        {
+          q: "Kam dovážíte?",
+          a: "Standardně rozvážíme po Praze a do 25 km od Prahy. Po dohodě jezdíme i dál — Středočeský kraj a okolní regiony. Vlastní vozový park s chladicí nástavbou znamená, že dorazíme na minutu přesně dle dohodnutého času. Příklady: coffee break v 10:00 v centru, raut po keynote v 17:30 v konferenčním centru."
+        },
+        {
+          q: "Jak to funguje s nádobím a inventářem?",
+          a: "Standardně servírujeme na bílém porcelánu se sklem a nerezovými příbory. Kompletní inventář (talíře, sklo, příbory, podnosy) je zapůjčen v ceně dohodnutého servisu. Druhý den po akci si pro vše přijedeme — špinavé nádobí jen vrátíte do našich beden. Žádné papírové talíře, pokud si je vyloženě nevyžádáte."
+        },
+        {
+          q: "Co když mám speciální dietu nebo alergie?",
+          a: "Vegetariánské a veganské varianty máme napříč všemi kategoriemi (chlebíčky, finger food, teplé pokrmy, dezerty). Bezlepkové, bezlaktózové, halal, košer i další speciální požadavky řešíme individuálně — stačí to napsat do poznámky v poptávce. U akce s alergiky v kuchyni sledujeme křížovou kontaminaci a každý chod značíme."
+        },
+        {
+          q: "Můžete zařídit i kávu, víno nebo nealko?",
+          a: "Ano — káva v termoskách (filtrovaná, espresso v termoskách), čaje, domácí limonády, džusy, balené vody, prosecco i běžné víno z vlastního výběru. Speciální požadavky (konkrétní vinařství, prémiový alkohol, barman na míchané drinky) naceníme samostatně. Stačí to zmínit v poptávce."
+        },
+        {
+          q: "Jak velkou akci zvládnete?",
+          a: "Pravidelně dodáváme akce od 10 do 500+ hostů. Coffee break pro představenstvo, raut pro 200 lidí na konferenci, firemní oslavu pro 350 — vše v rámci našich kapacit. Pro největší akce začínáme přípravu dva dny předem a posíláme posílený tým."
+        },
+        {
+          q: "Můžu si nechat naceněné něco co není v sortimentu?",
+          a: "Určitě. Custom dezerty (dort s logem firmy, narozeninový dort), specifická regionální kuchyně, fusion menu, dětský catering — to vše dokážeme. Stačí v poptávce popsat co potřebujete a my přijdeme s nabídkou. Žádný „to nemáme“ odpověď nečekejte."
+        },
+        {
+          q: "Kolik catering stojí?",
+          a: "Veřejně ceny neuvádíme — cena se vždy odvíjí od konkrétního menu, počtu hostů a rozsahu servisu. Při sestavení poptávky na webu vám pošleme konkrétní kalkulaci v řádu hodin. Pro orientaci: chlebíček/kanapka 39–69 Kč/ks, finger food 49–79 Kč/ks, teplý chod 195–325 Kč/porce, salát 155–195 Kč/porce. Velikost objednávky a délka spolupráce ovlivňují finální cenu."
+        }
+      ]
+    },
     footer: {
       tagline: "Catering & dodávky občerstvení pro firemní akce v Praze a okolí.",
       addr: "AR Catering s.r.o.\nKřížíkova 16, 186 00 Praha 8",
@@ -100,7 +138,7 @@ export const COPY: Record<string, CopyData> = {
     }
   },
   en: {
-    nav: { menu: "Menu", how: "How it works", reference: "Clients", contact: "Contact", quote: "Get a quote" },
+    nav: { menu: "Menu", how: "How it works", faq: "FAQ", reference: "Clients", contact: "Contact", quote: "Get a quote" },
     hero: {
       eyebrow: "Corporate catering in Prague & surroundings · family business since 2008",
       title: ["Catering", "that ", "elevates", " your event."],
@@ -185,6 +223,44 @@ export const COPY: Record<string, CopyData> = {
         { n: "4", t: "Deliver, set up, clear away", b: "On time, turnkey. We collect everything used after the event." }
       ]
     },
+    faq: {
+      eyebrow: "Frequently asked questions",
+      title: "What customers most often ask us.",
+      items: [
+        {
+          q: "How quickly will I get a price quote?",
+          a: "We reply to enquiries within an hour during office hours (Mon–Fri 8:00–17:00 CET). For complex events (receptions over 100 guests, multi-course menus, custom items) we'll send the priced proposal as soon as possible — typically the same day. For simpler orders (coffee breaks, sandwich platters) you'll have a quote within tens of minutes."
+        },
+        {
+          q: "What's your delivery area?",
+          a: "Standard delivery covers Prague and 25 km around it. By agreement we go further — the Central Bohemia region and beyond. Our own refrigerated fleet means on-the-minute arrival. Examples: 10:00 coffee break in the city centre, post-keynote reception at 17:30 in a conference centre."
+        },
+        {
+          q: "How does the porcelain and inventory loan work?",
+          a: "We serve on white porcelain with proper glassware and stainless cutlery as standard. The full inventory (plates, glasses, cutlery, trays) is included in the agreed service. The day after the event we collect everything — you only return the dirty dishes in our crates. No paper plates unless you specifically ask."
+        },
+        {
+          q: "What about special diets or allergies?",
+          a: "Vegetarian and vegan options run across every category (canapés, finger food, hot mains, desserts). Gluten-free, lactose-free, halal, kosher and other special requirements we handle individually — just note it in the form. For events with allergic guests we manage cross-contamination in the kitchen and label every dish."
+        },
+        {
+          q: "Can you arrange coffee, wine or soft drinks too?",
+          a: "Yes — coffee in flasks (filter, espresso), teas, homemade lemonades, juices, bottled water, prosecco and standard wine from our own selection. Special requests (specific winery, premium alcohol, bartender for cocktails) are quoted separately. Just mention it in the enquiry."
+        },
+        {
+          q: "How large an event can you handle?",
+          a: "We regularly deliver events from 10 to 500+ guests. Board coffee break, conference reception for 200, company celebration for 350 — all within our capacity. For the largest events we start prep two days ahead and send a reinforced team."
+        },
+        {
+          q: "Can I get something not in the menu priced?",
+          a: "Absolutely. Custom desserts (logo cake, birthday cake), specific regional cuisine, fusion menu, children's catering — we can do it all. Describe what you need in the enquiry and we'll come back with a quote. Don't expect a 'we don't do that' answer."
+        },
+        {
+          q: "How much does catering cost?",
+          a: "We don't publish prices publicly — the price always depends on the specific menu, guest count and service scope. When you build an enquiry on the site we'll send a concrete quote in a matter of hours. As a rough guide: canapés 39–69 CZK/pc, finger food 49–79 CZK/pc, hot main 195–325 CZK/portion, salad 155–195 CZK/portion. Order size and ongoing relationship affect the final price."
+        }
+      ]
+    },
     footer: {
       tagline: "Catering & food delivery for corporate events in Prague & surroundings.",
       addr: "AR Catering s.r.o.\nKřížíkova 16, 186 00 Prague 8",
@@ -202,7 +278,7 @@ export const COPY: Record<string, CopyData> = {
 };
 
 export interface CopyData {
-  nav: { menu: string; how: string; reference: string; contact: string; quote: string };
+  nav: { menu: string; how: string; faq: string; reference: string; contact: string; quote: string };
   hero: {
     eyebrow: string;
     title: string[];
@@ -267,6 +343,11 @@ export interface CopyData {
     eyebrow: string;
     title: string;
     steps: { n: string; t: string; b: string }[];
+  };
+  faq: {
+    eyebrow: string;
+    title: string;
+    items: { q: string; a: string }[];
   };
   footer: {
     tagline: string;

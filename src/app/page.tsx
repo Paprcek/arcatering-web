@@ -9,6 +9,7 @@ import { Hero } from "@/components/Hero";
 import { WhyUs } from "@/components/WhyUs";
 import { QuoteBuilder } from "@/components/QuoteBuilder";
 import { HowItWorks } from "@/components/HowItWorks";
+import { Faq } from "@/components/Faq";
 import { References } from "@/components/References";
 import { FooterCTA } from "@/components/FooterCTA";
 import { Footer } from "@/components/Footer";
@@ -44,6 +45,7 @@ function HomeView({ lang: initialLang, pricing }: { lang: string; pricing: Prici
           <QuoteBuilder copy={copy} products={products} lang={lang} pricing={pricing} />
         </section>
         <HowItWorks copy={copy} />
+        <Faq copy={copy} />
         <References copy={copy} />
         <FooterCTA copy={copy} />
       </main>
