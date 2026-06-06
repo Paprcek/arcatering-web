@@ -1,5 +1,6 @@
 # AR Catering — Web
 
+
 Marketing & lead-capture site for **AR Catering** (rodinný catering pro firemní akce v Praze a okolí, od 2008). Single-page Next.js 16 (App Router, Turbopack), deployed on Vercel.
 
 - **Production**: https://arcatering-web.vercel.app
