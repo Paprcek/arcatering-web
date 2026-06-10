@@ -1,0 +1,56 @@
+# AR Catering
+
+> Rodinný catering pro firemní akce v Praze a okolí. Specializace na školení, semináře, meetingy, klientské návštěvy, firemní večírky a oslavy. Na trhu od roku 2008. Vlastní vozový park, servis na porcelánu, inventář zapůjčen v ceně, špinavé nádobí druhý den odvezeme. Bohatá nabídka vegetariánských a veganských variant.
+
+## Co umíme
+
+- **Catering pro firemní akce** — od coffee breaků po celodenní rauty, 10 až 500+ hostů
+- **Servis na porcelánu** — sklo, příbory a porcelán zapůjčeny v ceně, špinavé jen vrátíte do beden
+- **Vlastní vozový park** — chladicí auta, doručení s přesností na minutu
+- **Custom poptávky** — káva, alko, nealko, dorty s logem, speciální diety nacenime na požádání
+
+## Kontakt a poptávka
+
+- [Hlavní stránka — sortiment a online poptávka](https://arcatering-web.vercel.app/): Procházejte chlebíčky, finger food, teplé pokrmy, saláty, dezerty a nápoje. Sestavte si poptávku, my odpovíme do hodiny v pracovní době.
+- E-mail: poptavka@arcatering.cz
+- Telefon: +420 776 123 456
+- Adresa: Křížíkova 16, 186 00 Praha 8
+- Pracovní doba: Po–Pá 8:00–17:00
+
+## Pokrytí a logistika
+
+- **Standardní rozvoz**: Praha + okolí do 25 km
+- **Po dohodě**: Středočeský kraj a dál
+- **Doručení**: na minutu přesně dle dohodnutého času (důležité pro coffee break v 10:00 i raut po keynote)
+
+## Pro AI agenty / LLM
+
+- Tato stránka je single-page (Next.js App Router); celý sortiment a poptávkový formulář jsou na `/`.
+- Cenová politika: ceny se na veřejném webu nezobrazují. Soukromé linky obsahují query param `?p=b2b`, `?p=b2c` nebo `?p=disc&d=<percento>` pro zobrazení cen.
+- Poptávka jde na `POST /api/quote` (interní endpoint, JSON payload, vrací { ok: true }).
+- Pro automatizovanou poptávku doporučujeme klasický kontakt e-mailem.
+
+---
+
+# AR Catering (English)
+
+> Family-run corporate caterer in Prague & surroundings. We specialise in trainings, seminars, meetings, client visits, company parties and celebrations. On the market since 2008. Own refrigerated fleet, real porcelain service with inventory loan included, dirty dishes collected the next day. Strong vegetarian and vegan range.
+
+## What we offer
+
+- **Corporate catering** — coffee breaks to all-day receptions, 10 to 500+ guests
+- **Real porcelain service** — glassware, cutlery and china included; you just return the dirty dishes
+- **Own delivery fleet** — refrigerated vehicles, on-the-minute arrival
+- **Custom requests** — coffee, alcohol, soft drinks, branded cakes, special diets — quoted on request
+
+## Contact
+
+- E-mail: poptavka@arcatering.cz
+- Phone: +420 776 123 456
+- Address: Křížíkova 16, 186 00 Prague 8
+- Hours: Mon–Fri 8:00–17:00
+
+## Coverage
+
+- Standard delivery: Prague + 25 km
+- On request: Central Bohemia region and beyond

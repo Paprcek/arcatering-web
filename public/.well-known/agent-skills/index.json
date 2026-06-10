@@ -1,0 +1,26 @@
+{
+  "$schema": "https://schemas.anthropic.com/agent-skills/index/v1.json",
+  "version": "1.0.0",
+  "site": {
+    "name": "AR Catering",
+    "url": "https://arcatering-web.vercel.app",
+    "contact": "poptavka@arcatering.cz"
+  },
+  "skills": [
+    {
+      "id": "ar-catering.submit-quote",
+      "name": "Submit a catering quote request",
+      "description": "Submit a non-binding catering enquiry to AR Catering for a corporate event in Prague & surroundings.",
+      "manifest": "https://arcatering-web.vercel.app/skill.md",
+      "language": ["cs", "en"],
+      "tags": ["catering", "corporate", "events", "food-service", "prague"],
+      "endpoint": {
+        "url": "https://arcatering-web.vercel.app/api/quote",
+        "method": "POST",
+        "contentType": "application/json"
+      },
+      "auth": "none",
+      "rateLimit": "Reasonable use; abuse will be blocked at the edge."
+    }
+  ]
+}
