@@ -43,7 +43,7 @@ export async function POST(request: Request) {
       Contact_Name: payload.contact?.name ?? "",
       Company: payload.contact?.company ?? "",
       Email: payload.contact?.email ?? "",
-      Phone: payload.contact?.phone ?? "",
+      Phone_Number: payload.contact?.phone ?? "",
       Language: payload.lang ?? "cs",
       Submitted_At: toCreatorDateTime(payload.ts),
     };
