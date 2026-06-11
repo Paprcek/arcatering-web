@@ -8,6 +8,9 @@ export interface ProductItem {
   unit: string;
   min: number;
   tags: string[];
+  /** Popis a alergeny z Creatoru (volitelné – hardcoded data je nemají). */
+  description?: string;
+  allergens?: string[];
 }
 
 export interface Category {
