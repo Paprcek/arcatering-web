@@ -2,7 +2,10 @@
 
 ## Overview
 
-The quote builder submits a JSON payload to `/api/quote` (Next.js API route at `src/app/api/quote/route.ts`). Currently this is a stub that logs the payload and returns success. This guide explains what's needed from the Zoho side and how to switch to the real integration.
+Two Creator integrations live in this project:
+
+1. **Inbound — Quote submissions.** The quote builder submits a JSON payload to `/api/quote` (Next.js API route at `src/app/api/quote/route.ts`). Currently this is a stub that logs the payload and returns success. This guide explains what's needed from the Zoho side and how to switch to the real integration.
+2. **Outbound — Product catalog sync.** Products in `src/data/products.ts` will be sourced from a Creator app over time, including each item's photo URL (`urlPic` field — Cloudinary). See *Product catalog sync* below.
 
 ---
 
@@ -167,10 +170,11 @@ This is what the frontend sends to `/api/quote`:
 ```json
 {
   "items": [
-    { "id": "k1", "name": "Chlebicek s lososovou penou", "qty": 24, "price": 49, "unit": "ks" },
-    { "id": "f3", "name": "Krevety v parmske sunce", "qty": 12, "price": 79, "unit": "ks" }
+    { "id": "k1", "name": "Chlebicek s lososovou penou", "qty": 24, "price": 49, "basePrice": 49, "unit": "ks" },
+    { "id": "f3", "name": "Krevety v parmske sunce", "qty": 12, "price": 79, "basePrice": 79, "unit": "ks" }
   ],
   "total": 2124,
+  "pricing": { "tier": "b2b", "discount": 0 },
   "event": {
     "guests": 30,
     "date": "2026-05-15T17:30",
@@ -186,6 +190,61 @@ This is what the frontend sends to `/api/quote`:
   "ts": "2026-04-28T21:00:00.000Z"
 }
 ```
+
+### Pricing tier (payload)
+
+The `pricing` object reflects the **link tier** the customer used:
+
+- `tier: "none"` — public web view, no prices were shown. `total` is `null`, `items[].price` is `null`. Treat the request as a free-form enquiry.
+- `tier: "b2b"` — prices excl. VAT (current standard).
+- `tier: "b2c"` — prices were shown without any VAT mention (consumer view).
+- `tier: "disc"` — `discount` is the percentage off; `items[].price` is what the customer saw, `items[].basePrice` is the original catalog price for the same item.
+
+Recommended Creator fields to add: `Pricing_Tier` (single-line) and `Discount_Pct` (number).
+
+---
+
+## Product catalog sync (outbound)
+
+The frontend reads products from `src/data/products.ts` today (a static TypeScript export). Migration target is a Creator app whose **Products** form populates this file (build-time fetch) or a future `/api/products` endpoint.
+
+### Recommended Creator product fields
+
+| Zoho Field         | Type         | Maps to TypeScript                          |
+|--------------------|--------------|---------------------------------------------|
+| ID                 | Single-line  | `id` (stable, used as React key)            |
+| Name CS            | Single-line  | `name` (when lang=cs)                       |
+| Name EN            | Single-line  | `name` (when lang=en)                       |
+| Category           | Single-select| → maps to a `Category.id` in products.ts    |
+| Price              | Number       | `price` (CZK)                               |
+| Unit               | Single-line  | `unit` (`ks`, `porce`, `os`, `hod`, `akce`) |
+| Min                | Number       | `min` (minimum order quantity)              |
+| Tags               | Multi-select | `tags[]` (`veg`, `vegan`, `ryba`, `bezlepkové`) |
+| **urlPic**         | **URL**      | `urlPic` (Cloudinary CDN URL)               |
+| Active             | Boolean      | filter out when false                       |
+
+### Cloudinary upload pipeline
+
+1. In the Creator product form, attach an image upload control (any name) and a Deluge workflow on save.
+2. Workflow uploads the file to Cloudinary using a [signed upload preset](https://cloudinary.com/documentation/upload_presets) — recommended preset config:
+   - `folder`: `arcatering/products`
+   - `eager`: `f_auto,q_auto,c_fill,g_auto,w_500,h_375` (transformations baked in once)
+   - `unique_filename`: `true`
+   - `overwrite`: `false`
+3. Cloudinary's response includes `secure_url` (the `https://res.cloudinary.com/...` URL). The Deluge step writes that into the **urlPic** field.
+4. Frontend (`QuoteBuilder.tsx` / `Image src={item.urlPic ?? item.photo}`) picks it up automatically.
+
+`next.config.ts` already whitelists `res.cloudinary.com` under `images.remotePatterns`, so `next/image` will optimize and CDN-cache the URL on Vercel's edge.
+
+### Creator → static products.ts (build-time)
+
+For now (v1) the simplest path is a periodic export from Creator:
+
+1. Schedule a Creator script (Deluge cron) that produces a JSON dump of all active products
+2. Push to a known location (Creator file URL, S3, or commit to repo)
+3. A Vercel build hook regenerates `src/data/products.ts` from the JSON before each build
+
+For a fully dynamic catalog (no rebuild on product change), add `src/app/api/products/route.ts` that proxies the Creator REST API and have `page.tsx` fetch it server-side. Cache aggressively (e.g. `revalidate: 3600`).
 
 ---
 

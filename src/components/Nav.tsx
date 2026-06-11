@@ -24,6 +24,7 @@ export function Nav({ copy, lang, setLang }: { copy: CopyData; lang: string; set
         <nav className="nav-links">
           <a href="#menu">{copy.nav.menu}</a>
           <a href="#how">{copy.nav.how}</a>
+          <a href="#faq">{copy.nav.faq}</a>
           <a href="#refs">{copy.nav.reference}</a>
           <a href="#footer">{copy.nav.contact}</a>
         </nav>
