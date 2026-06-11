@@ -1,9 +1,9 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { COPY } from "@/data/copy";
-import { PRODUCTS } from "@/data/products";
+import { PRODUCTS, type Category } from "@/data/products";
 import { Nav } from "@/components/Nav";
 import { Hero } from "@/components/Hero";
 import { WhyUs } from "@/components/WhyUs";
@@ -32,7 +32,22 @@ function HomeWithParams() {
 function HomeView({ lang: initialLang, pricing }: { lang: string; pricing: PricingConfig }) {
   const [lang, setLang] = useState(initialLang);
   const copy = COPY[lang];
-  const products = PRODUCTS[lang].categories;
+
+  // Katalog se načítá z Creatoru přes /api/products.
+  // Když fetch selže nebo vrátí prázdno, padáme na hardcoded data (fallback).
+  const [products, setProducts] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/products")
+      .then((r) => r.json())
+      .then((d) => {
+        const cats: Category[] = d.categories ?? [];
+        setProducts(cats.length > 0 ? cats : PRODUCTS["cs"].categories);
+      })
+      .catch(() => setProducts(PRODUCTS["cs"].categories))
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <>
@@ -42,7 +57,13 @@ function HomeView({ lang: initialLang, pricing }: { lang: string; pricing: Prici
         <Hero copy={copy} />
         <WhyUs copy={copy} />
         <section id="menu">
-          <QuoteBuilder copy={copy} products={products} lang={lang} pricing={pricing} />
+          {loading || products.length === 0 ? (
+            <div style={{ padding: 60, textAlign: "center", color: "#5b6b57" }}>
+              Načítám nabídku…
+            </div>
+          ) : (
+            <QuoteBuilder copy={copy} products={products} lang={lang} pricing={pricing} />
+          )}
         </section>
         <HowItWorks copy={copy} />
         <Faq copy={copy} />

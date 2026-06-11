@@ -26,6 +26,7 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [form, setForm] = useState({ guests: "30", date: "", notes: "", name: "", company: "", email: "", phone: "", consent: false });
   const [submitState, setSubmitState] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [detail, setDetail] = useState<ProductItem | null>(null);
 
   const priced = showsPrices(pricing.tier);
   const showVat = showsVatNote(pricing.tier);
@@ -114,12 +115,12 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
     const shown = effectivePrice(item.price, pricing);
     return (
       <div className={`item-card ${qty > 0 ? "has" : ""}`}>
-        <div className="item-card-photo">
+        <div className="item-card-photo" onClick={() => setDetail(item)} role="button" tabIndex={0} aria-label={item.name} style={{ cursor: "pointer" }}>
           <Image src={item.urlPic ?? item.photo} alt={item.name} width={250} height={187} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
         </div>
         <div className="item-card-body">
           <div className="item-card-top">
-            <div className="item-card-name">{item.name}</div>
+            <div className="item-card-name" onClick={() => setDetail(item)} style={{ cursor: "pointer" }}>{item.name}</div>
             {item.tags.length > 0 && (
               <div className="tags">
                 {item.tags.slice(0, 2).map(tg => <span key={tg} className="tag">{tagLabel(tg)}</span>)}
@@ -336,6 +337,51 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
           <div className="mobile-drawer-inner" onClick={e => e.stopPropagation()}>
             <button className="mobile-drawer-close" onClick={() => setDrawerOpen(false)}><Icon name="close" /></button>
             {cartContents}
+          </div>
+        </div>
+      )}
+
+      {detail && (
+        <div
+          onClick={() => setDetail(null)}
+          style={{ position: "fixed", inset: 0, background: "rgba(17,25,34,0.55)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: 20 }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{ background: "#fff", borderRadius: 14, maxWidth: 520, width: "100%", maxHeight: "90vh", overflow: "auto", position: "relative" }}
+          >
+            <button className="mobile-drawer-close" onClick={() => setDetail(null)} style={{ position: "absolute", top: 12, right: 12, zIndex: 1 }}>
+              <Icon name="close" />
+            </button>
+            <div style={{ width: "100%", aspectRatio: "4 / 3", overflow: "hidden", borderRadius: "14px 14px 0 0" }}>
+              <Image src={detail.urlPic ?? detail.photo} alt={detail.name} width={520} height={390} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
+            </div>
+            <div style={{ padding: 24 }}>
+              <h3 className="display-h4" style={{ margin: "0 0 8px 0" }}>{detail.name}</h3>
+              {detail.tags && detail.tags.length > 0 && (
+                <div className="tags" style={{ marginBottom: 10 }}>
+                  {detail.tags.map(tg => <span key={tg} className="tag">{tagLabel(tg)}</span>)}
+                </div>
+              )}
+              {detail.description && <p style={{ margin: "0 0 12px 0", lineHeight: 1.6 }}>{detail.description}</p>}
+              {detail.allergens && detail.allergens.length > 0 && (
+                <p className="muted" style={{ margin: "0 0 14px 0", fontSize: 13 }}>
+                  {lang === "cs" ? "Alergeny: " : "Allergens: "}{detail.allergens.join(", ")}
+                </p>
+              )}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginTop: 8 }}>
+                {priced ? (
+                  <div className="item-card-price">
+                    <b>{effectivePrice(detail.price, pricing)}</b><span className="csym"> Kč</span><span className="punit">/{detail.unit}</span>
+                  </div>
+                ) : (
+                  <div className="item-card-price item-card-price-empty">
+                    <span className="punit">{lang === "cs" ? `min. ${detail.min} ${detail.unit}` : `min. ${detail.min} ${detail.unit}`}</span>
+                  </div>
+                )}
+                <Stepper qty={cart[detail.id] || 0} onInc={() => inc(detail.id)} onDec={() => dec(detail.id)} addLabel={c.add} />
+              </div>
+            </div>
           </div>
         </div>
       )}
