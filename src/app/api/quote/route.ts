@@ -34,12 +34,18 @@ export async function POST(request: Request) {
     const payload = await request.json();
     const token = await getAccessToken();
 
+    // Creator dropdown Delivery_Method má hodnoty "Delivery"/"Pickup" (velké
+    // první písmeno) – frontend interně používá "delivery"/"pickup".
+    const deliveryMethodMap: Record<string, string> = { delivery: "Delivery", pickup: "Pickup" };
+
     const zohoData = {
       Items_JSON: JSON.stringify(payload.items ?? []),
       Total: payload.total ?? 0,
       Guests: payload.event?.guests ?? 0,
       Event_Date: toCreatorDateTime(payload.event?.date),
       Notes: payload.event?.notes ?? "",
+      Delivery_Method: deliveryMethodMap[payload.delivery?.method] ?? "",
+      Delivery_Address: payload.delivery?.address ?? "",
       Contact_Name: payload.contact?.name ?? "",
       Company: payload.contact?.company ?? "",
       Email: payload.contact?.email ?? "",

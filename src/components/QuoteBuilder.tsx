@@ -19,14 +19,26 @@ interface QuoteBuilderProps {
   pricing: PricingConfig;
 }
 
+// AI asistent zatím nejde do produkce (rozhodnutí 2026-09-10) – vypnuto,
+// dokud se nezapne NEXT_PUBLIC_ENABLE_AI_ASSISTANT=true ve Vercel env vars.
+const AI_ASSISTANT_ENABLED = process.env.NEXT_PUBLIC_ENABLE_AI_ASSISTANT === "true";
+
 export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProps) {
   const [cart, setCart] = useState<Record<string, number>>({});
   const [activeCat, setActiveCat] = useState(products[0].id);
   const [filter, setFilter] = useState("all");
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [form, setForm] = useState({ guests: "30", date: "", notes: "", name: "", company: "", email: "", phone: "", consent: false });
+  const [form, setForm] = useState({
+    guests: "30", date: "", notes: "", name: "", company: "", email: "", phone: "", consent: false,
+    deliveryMethod: "delivery" as "delivery" | "pickup", deliveryAddress: "",
+  });
   const [submitState, setSubmitState] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [detail, setDetail] = useState<ProductItem | null>(null);
+  const [assistantText, setAssistantText] = useState("");
+  const [assistantState, setAssistantState] = useState<"idle" | "sending" | "done" | "error">("idle");
+  const [assistantSummary, setAssistantSummary] = useState<string | null>(null);
+  const [assistantUnmatched, setAssistantUnmatched] = useState<{ name: string; quantity: number }[]>([]);
+  const [assistantAdded, setAssistantAdded] = useState<{ name: string; quantity: number }[]>([]);
 
   const priced = showsPrices(pricing.tier);
   const showVat = showsVatNote(pricing.tier);
@@ -53,6 +65,46 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
   const inc = (id: string) => setQty(id, (cart[id] || 0) + 1);
   const dec = (id: string) => setQty(id, Math.max(0, (cart[id] || 0) - 1));
 
+  const handleAssistantSubmit = async () => {
+    const text = assistantText.trim();
+    if (!text || assistantState === "sending") return;
+    setAssistantState("sending");
+    setAssistantSummary(null);
+    setAssistantUnmatched([]);
+    setAssistantAdded([]);
+    try {
+      const catalog = products.flatMap(cat =>
+        cat.items.map(it => ({ id: it.id, name: it.name, price: it.price, unit: it.unit, category: cat.title }))
+      );
+      const res = await fetch("/api/assistant", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ inquiry_text: text, catalog }),
+      });
+      if (!res.ok) throw new Error("assistant failed");
+      const data = await res.json();
+      const matched: { product_id: string; name: string; quantity: number }[] = data.matched_items ?? [];
+      const validMatched = matched
+        .map(m => ({ ...m, qty: m.quantity || 1, item: allItems[m.product_id] }))
+        .filter(m => m.item);
+      setCart(c => {
+        const n = { ...c };
+        validMatched.forEach(m => {
+          n[m.product_id] = (n[m.product_id] || 0) + m.qty;
+        });
+        return n;
+      });
+      const added = validMatched.map(m => ({ name: m.item.name, quantity: m.qty }));
+      setAssistantAdded(added);
+      setAssistantSummary(data.summary ?? null);
+      setAssistantUnmatched(data.unmatched_items ?? []);
+      setAssistantState("done");
+      if (added.length > 0) setDrawerOpen(true);
+    } catch {
+      setAssistantState("error");
+    }
+  };
+
   const filtered = (cat: Category) => {
     if (filter === "all") return cat.items;
     if (filter === "veg") return cat.items.filter(i => i.tags.includes("veg") || i.tags.includes("vegan"));
@@ -61,13 +113,17 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
     return cat.items;
   };
 
+  const deliveryAddressMissing = form.deliveryMethod === "delivery" && !form.deliveryAddress.trim();
+  const canSubmit = form.consent && !!form.email && !!form.name && cartList.length > 0 && !deliveryAddressMissing;
+
   const handleSubmit = async () => {
-    if (!form.consent || !form.email || !form.name || cartList.length === 0) return;
+    if (!canSubmit) return;
     setSubmitState("sending");
     const payload = {
       items: cartList.map(it => ({
         id: it.id,
         name: it.name,
+        category: it.catTitle,
         qty: it.qty,
         price: priced ? it.price : null,
         basePrice: it.basePrice,
@@ -76,6 +132,10 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
       total: priced ? total : null,
       pricing: { tier: pricing.tier, discount: pricing.discount },
       event: { guests: form.guests, date: form.date, notes: form.notes },
+      delivery: {
+        method: form.deliveryMethod,
+        address: form.deliveryMethod === "delivery" ? form.deliveryAddress : null,
+      },
       contact: { name: form.name, company: form.company, email: form.email, phone: form.phone },
       lang,
       ts: new Date().toISOString()
@@ -205,6 +265,53 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
                   <input id="qf-date" name="date" type="datetime-local" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} />
                 </label>
               </div>
+              <div className="field">
+                <span className="field-label">{c.formDeliveryMethod}</span>
+                <div className="delivery-toggle">
+                  <button
+                    type="button"
+                    className={`pill ${form.deliveryMethod === "delivery" ? "on" : ""}`}
+                    onClick={() => setForm({ ...form, deliveryMethod: "delivery" })}
+                  >
+                    {c.deliveryDelivery}
+                  </button>
+                  <button
+                    type="button"
+                    className={`pill ${form.deliveryMethod === "pickup" ? "on" : ""}`}
+                    onClick={() => setForm({ ...form, deliveryMethod: "pickup" })}
+                  >
+                    {c.deliveryPickup}
+                  </button>
+                </div>
+              </div>
+              {form.deliveryMethod === "delivery" ? (
+                <label className="field" htmlFor="qf-delivery-address">
+                  <span className="field-label">{c.formDeliveryAddress}<em> *</em></span>
+                  <input
+                    id="qf-delivery-address"
+                    name="deliveryAddress"
+                    type="text"
+                    placeholder={c.formDeliveryAddressPh}
+                    value={form.deliveryAddress}
+                    onChange={e => setForm({ ...form, deliveryAddress: e.target.value })}
+                  />
+                </label>
+              ) : (
+                <div className="field">
+                  <span className="field-label">{c.pickupNote}</span>
+                  <address className="pickup-address">
+                    {c.pickupAddress.split("\n").map((l, i) => <div key={i}>{l}</div>)}
+                  </address>
+                  <div className="pickup-map">
+                    <iframe
+                      src={`https://www.google.com/maps?q=${encodeURIComponent(c.pickupAddress.replace("\n", ", "))}&output=embed`}
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title="AR Catering"
+                    />
+                  </div>
+                </div>
+              )}
               <label className="field" htmlFor="qf-notes">
                 <span className="field-label">{c.formNotes}</span>
                 <textarea id="qf-notes" name="notes" rows={2} placeholder={c.formNotesPh} value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} />
@@ -232,7 +339,12 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
               </div>
               <label className="consent" htmlFor="qf-consent">
                 <input id="qf-consent" name="consent" type="checkbox" required checked={form.consent} onChange={e => setForm({ ...form, consent: e.target.checked })} />
-                <span>{c.consent}</span>
+                <span>
+                  {c.consent}{" "}
+                  <a href="/zasady-ochrany-osobnich-udaju" target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}>
+                    {c.consentLinkLabel}
+                  </a>
+                </span>
               </label>
             </form>
           </div>
@@ -245,11 +357,12 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
                   <b className="cart-total-num">{fmt(total)} Kč</b>
                 </div>
                 <p className="muted total-note">{totalNote}</p>
+                <p className="muted total-note">{c.preliminaryNote}</p>
               </div>
             )}
             <button
               className="submit-btn"
-              disabled={submitState === "sending" || !form.consent || !form.email || !form.name || cartList.length === 0}
+              disabled={submitState === "sending" || !canSubmit}
               onClick={handleSubmit}
             >
               {submitState === "sending" ? c.sending : submitLabel}
@@ -277,6 +390,54 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
 
         <div className="quote-shell with-drawer">
           <div className="quote-catalog">
+            {AI_ASSISTANT_ENABLED && (
+            <div className="ai-assistant">
+              <div className="ai-assistant-head">
+                <b>{c.assistantTitle}</b>
+                <span>{c.assistantBody}</span>
+              </div>
+              <div className="ai-assistant-row">
+                <div className="field">
+                  <textarea
+                    rows={2}
+                    aria-label={c.assistantTitle}
+                    placeholder={c.assistantPlaceholder}
+                    value={assistantText}
+                    onChange={e => setAssistantText(e.target.value)}
+                  />
+                </div>
+                <button
+                  className="add-btn"
+                  disabled={assistantState === "sending" || !assistantText.trim()}
+                  onClick={handleAssistantSubmit}
+                >
+                  <Icon name="plus" size={12} />
+                  <span>{assistantState === "sending" ? c.assistantSending : c.assistantButton}</span>
+                </button>
+              </div>
+              {assistantState === "done" && (
+                <div className="ai-assistant-feedback">
+                  {assistantAdded.length > 0 ? (
+                    <div className="ai-assistant-added">
+                      <b>{c.assistantAddedNote}</b> {assistantAdded.map(a => `${a.quantity}× ${a.name}`).join(", ")}
+                    </div>
+                  ) : (
+                    <div className="ai-assistant-unmatched">{c.assistantNothingFound}</div>
+                  )}
+                  {assistantUnmatched.length > 0 && (
+                    <div className="ai-assistant-unmatched">
+                      {c.assistantUnmatchedNote} {assistantUnmatched.map(u => `${u.name} (${u.quantity})`).join(", ")}
+                    </div>
+                  )}
+                </div>
+              )}
+              {assistantState === "error" && (
+                <div className="ai-assistant-feedback">
+                  <div className="ai-assistant-error">{c.assistantError}</div>
+                </div>
+              )}
+            </div>
+            )}
             <div className="custom-note">
               <div className="custom-note-icon"><Icon name="plus" size={14} /></div>
               <div className="custom-note-body">
