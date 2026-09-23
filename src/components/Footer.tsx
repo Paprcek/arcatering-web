@@ -33,6 +33,8 @@ export function Footer({ copy, tier = "none" }: { copy: CopyData; tier?: Pricing
       </div>
       <div className="container footer-legal">
         <span className="muted small">{legal}</span>
+        {" · "}
+        <span className="muted small">{copy.footer.allergensNote}</span>
       </div>
     </footer>
   );

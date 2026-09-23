@@ -129,7 +129,8 @@ export const COPY: Record<string, CopyData> = {
       hours: "Po–Pá 8:00–17:00",
       contact: "Kontakt",
       legal: "© 2026 AR Catering s.r.o. — IČO 12345678. Vše v ceně bez DPH, pokud není uvedeno jinak.",
-      legalNoVat: "© 2026 AR Catering s.r.o. — IČO 12345678."
+      legalNoVat: "© 2026 AR Catering s.r.o. — IČO 12345678.",
+      allergensNote: "U položek, kde není uveden úplný seznam alergenů, jej rádi doplníme na vyžádání — napište nám na poptavka@arcatering.cz."
     },
     footerCta: {
       title: "Plánujete akci v Praze nebo okolí?",
@@ -267,7 +268,8 @@ export const COPY: Record<string, CopyData> = {
       hours: "Mon–Fri 8:00–17:00",
       contact: "Contact",
       legal: "© 2026 AR Catering s.r.o. — Company ID 12345678. All prices VAT excluded unless stated.",
-      legalNoVat: "© 2026 AR Catering s.r.o. — Company ID 12345678."
+      legalNoVat: "© 2026 AR Catering s.r.o. — Company ID 12345678.",
+      allergensNote: "For items without a full allergen list, we're happy to provide it on request — email us at poptavka@arcatering.cz."
     },
     footerCta: {
       title: "Planning an event in Prague or nearby?",
@@ -356,6 +358,7 @@ export interface CopyData {
     contact: string;
     legal: string;
     legalNoVat: string;
+    allergensNote: string;
   };
   footerCta: {
     title: string;
