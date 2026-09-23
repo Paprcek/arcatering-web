@@ -39,12 +39,20 @@ export const COPY: Record<string, CopyData> = {
       totalNote: "Konečnou cenu potvrdíme v nabídce. Bez DPH.",
       totalNoteB2c: "Konečnou cenu potvrdíme v nabídce.",
       totalNoteDisc: "Ceny po individuální slevě. Konečnou cenu potvrdíme v nabídce.",
+      preliminaryNote: "Jde o orientační kalkulaci — doprava se dopočítá zvlášť podle vzdálenosti.",
       submit: "Odeslat poptávku",
       submitNoPrice: "Odeslat nezávaznou poptávku",
       sending: "Odesílám…",
       sent: "Odesláno. Ozveme se do hodiny.",
       formGuests: "Počet hostů",
       formDate: "Datum a čas akce",
+      formDeliveryMethod: "Způsob předání",
+      deliveryDelivery: "Doručení",
+      deliveryPickup: "Osobní odběr",
+      formDeliveryAddress: "Adresa doručení",
+      formDeliveryAddressPh: "Ulice a číslo, město, PSČ",
+      pickupNote: "Vyzvednutí na adrese:",
+      pickupAddress: "Areál MŠ Sluníčko\nLaudova 1, 160 00 Praha 6 - Řepy",
       formNotes: "Poznámka (alergeny, místo, formát akce…)",
       formNotesPh: "Např. raut na stojáka, alergie na ořechy u 2 hostů, dovoz do Karlína v 17:30…",
       formName: "Jméno a příjmení",
@@ -52,6 +60,7 @@ export const COPY: Record<string, CopyData> = {
       formEmail: "E-mail",
       formPhone: "Telefon",
       consent: "Souhlasím se zpracováním osobních údajů pro účely vyřízení poptávky.",
+      consentLinkLabel: "Zásady zpracování osobních údajů",
       next: "Pokračovat",
       back: "Zpět",
       filterAll: "Vše",
@@ -125,11 +134,16 @@ export const COPY: Record<string, CopyData> = {
     },
     footer: {
       tagline: "Catering & dodávky občerstvení pro firemní akce v Praze a okolí.",
-      addr: "AR Catering s.r.o.\nKřížíkova 16, 186 00 Praha 8",
+      addr: "ARcateringCZ s.r.o.\nBubenská 575/23, 170 00 Praha 7 - Holešovice",
       hours: "Po–Pá 8:00–17:00",
       contact: "Kontakt",
-      legal: "© 2026 AR Catering s.r.o. — IČO 12345678. Vše v ceně bez DPH, pokud není uvedeno jinak.",
-      legalNoVat: "© 2026 AR Catering s.r.o. — IČO 12345678.",
+      contacts: [
+        { name: "Richard Spudil", phone: "+420 608 833 229", email: "richard.spudil@arcatering.cz" },
+        { name: "Aleš Tichý", phone: "+420 724 066 555", email: "ales.tichy@arcatering.cz" },
+      ],
+      legal: "© 2026 ARcateringCZ s.r.o. — IČO 04810694, DIČ CZ04810694. Vše v ceně bez DPH, pokud není uvedeno jinak.",
+      legalNoVat: "© 2026 ARcateringCZ s.r.o. — IČO 04810694, DIČ CZ04810694.",
+      gdprLink: "Zásady zpracování osobních údajů",
       allergensNote: "U položek, kde není uveden úplný seznam alergenů, jej rádi doplníme na vyžádání — napište nám na poptavka@arcatering.cz."
     },
     footerCta: {
@@ -178,12 +192,20 @@ export const COPY: Record<string, CopyData> = {
       totalNote: "Final price confirmed in the proposal. VAT excluded.",
       totalNoteB2c: "Final price confirmed in the proposal.",
       totalNoteDisc: "Prices include your individual discount. Final price confirmed in the proposal.",
+      preliminaryNote: "This is an indicative calculation — delivery is calculated separately based on distance.",
       submit: "Send quote request",
       submitNoPrice: "Send enquiry",
       sending: "Sending…",
       sent: "Sent. We'll be in touch within an hour.",
       formGuests: "Number of guests",
       formDate: "Event date & time",
+      formDeliveryMethod: "Delivery method",
+      deliveryDelivery: "Delivery",
+      deliveryPickup: "Pickup",
+      formDeliveryAddress: "Delivery address",
+      formDeliveryAddressPh: "Street and number, city, ZIP",
+      pickupNote: "Pickup address:",
+      pickupAddress: "Areál MŠ Sluníčko\nLaudova 1, 160 00 Prague 6 - Řepy",
       formNotes: "Notes (allergens, venue, event format…)",
       formNotesPh: "E.g. standing reception, 2 guests with nut allergy, delivery to Karlín at 17:30…",
       formName: "Full name",
@@ -191,6 +213,7 @@ export const COPY: Record<string, CopyData> = {
       formEmail: "Email",
       formPhone: "Phone",
       consent: "I agree to the processing of personal data for the purpose of this enquiry.",
+      consentLinkLabel: "Privacy policy",
       next: "Continue",
       back: "Back",
       filterAll: "All",
@@ -264,11 +287,16 @@ export const COPY: Record<string, CopyData> = {
     },
     footer: {
       tagline: "Catering & food delivery for corporate events in Prague & surroundings.",
-      addr: "AR Catering s.r.o.\nKřížíkova 16, 186 00 Prague 8",
+      addr: "ARcateringCZ s.r.o.\nBubenská 575/23, 170 00 Prague 7 - Holešovice",
       hours: "Mon–Fri 8:00–17:00",
       contact: "Contact",
-      legal: "© 2026 AR Catering s.r.o. — Company ID 12345678. All prices VAT excluded unless stated.",
-      legalNoVat: "© 2026 AR Catering s.r.o. — Company ID 12345678.",
+      contacts: [
+        { name: "Richard Spudil", phone: "+420 608 833 229", email: "richard.spudil@arcatering.cz" },
+        { name: "Aleš Tichý", phone: "+420 724 066 555", email: "ales.tichy@arcatering.cz" },
+      ],
+      legal: "© 2026 ARcateringCZ s.r.o. — Company ID 04810694, VAT CZ04810694. All prices VAT excluded unless stated.",
+      legalNoVat: "© 2026 ARcateringCZ s.r.o. — Company ID 04810694, VAT CZ04810694.",
+      gdprLink: "Privacy Policy",
       allergensNote: "For items without a full allergen list, we're happy to provide it on request — email us at poptavka@arcatering.cz."
     },
     footerCta: {
@@ -312,12 +340,20 @@ export interface CopyData {
     totalNote: string;
     totalNoteB2c: string;
     totalNoteDisc: string;
+    preliminaryNote: string;
     submit: string;
     submitNoPrice: string;
     sending: string;
     sent: string;
     formGuests: string;
     formDate: string;
+    formDeliveryMethod: string;
+    deliveryDelivery: string;
+    deliveryPickup: string;
+    formDeliveryAddress: string;
+    formDeliveryAddressPh: string;
+    pickupNote: string;
+    pickupAddress: string;
     formNotes: string;
     formNotesPh: string;
     formName: string;
@@ -325,6 +361,7 @@ export interface CopyData {
     formEmail: string;
     formPhone: string;
     consent: string;
+    consentLinkLabel: string;
     next: string;
     back: string;
     filterAll: string;
@@ -356,8 +393,10 @@ export interface CopyData {
     addr: string;
     hours: string;
     contact: string;
+    contacts: { name: string; phone: string; email: string }[];
     legal: string;
     legalNoVat: string;
+    gdprLink: string;
     allergensNote: string;
   };
   footerCta: {

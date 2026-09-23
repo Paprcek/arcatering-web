@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { CopyData } from "@/data/copy";
 import { showsVatNote, type PricingTier } from "@/lib/pricing";
 
@@ -21,8 +22,13 @@ export function Footer({ copy, tier = "none" }: { copy: CopyData; tier?: Pricing
         </div>
         <div className="footer-col">
           <h4 className="footer-h">{copy.footer.contact}</h4>
-          <a href="mailto:poptavka@arcatering.cz">poptavka@arcatering.cz</a>
-          <a href="tel:+420776123456">+420 776 123 456</a>
+          {copy.footer.contacts.map(p => (
+            <div key={p.email} className="footer-contact-person">
+              <span className="footer-contact-name">{p.name}</span>
+              <a href={`mailto:${p.email}`}>{p.email}</a>
+              <a href={`tel:${p.phone.replace(/\s/g, "")}`}>{p.phone}</a>
+            </div>
+          ))}
           <span className="muted">{copy.footer.hours}</span>
         </div>
         <div className="footer-col">
@@ -33,6 +39,8 @@ export function Footer({ copy, tier = "none" }: { copy: CopyData; tier?: Pricing
       </div>
       <div className="container footer-legal">
         <span className="muted small">{legal}</span>
+        {" · "}
+        <Link href="/zasady-ochrany-osobnich-udaju" className="muted small">{copy.footer.gdprLink}</Link>
         {" · "}
         <span className="muted small">{copy.footer.allergensNote}</span>
       </div>
