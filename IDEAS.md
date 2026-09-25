@@ -1,5 +1,12 @@
 # AR Catering — Ideas & Open Items
 
+## TODO – právní náležitosti
+
+- [ ] **Souhlas se zpracováním osobních údajů (GDPR)** – checkbox v poptávkovém formuláři už je, ale chybí odkaz na dokument/stránku se zásadami ochrany osobních údajů
+- [ ] **Obchodní podmínky** – vytvořit stránku `/obchodni-podminky` a přidat odkaz do footeru + formuláře
+
+---
+
 ## 1. Quick quote mode (form-only)
 
 Let users skip the product catalog entirely. Just show the contact form with a notes/comment field where they describe what they need in free text ("raut pro 50 lidi, mix kanapek a finger food, budget cca 15k"). The sales team builds the quote manually.
