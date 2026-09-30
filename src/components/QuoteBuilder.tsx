@@ -124,10 +124,15 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
   const ItemCard = ({ item }: { item: ProductItem }) => {
     const qty = cart[item.id] || 0;
     const shown = effectivePrice(item.price, pricing);
+    const [photoError, setPhotoError] = useState(false);
     return (
       <div className={`item-card ${qty > 0 ? "has" : ""}`}>
         <div className="item-card-photo" onClick={() => setDetail(item)} role="button" tabIndex={0} aria-label={item.name} style={{ cursor: "pointer" }}>
-          <Image src={item.urlPic ?? item.photo} alt={item.name} width={250} height={187} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
+          {photoError ? (
+            <div className="photo-placeholder"><Icon name="photo" size={40} /></div>
+          ) : (
+            <Image src={item.urlPic ?? item.photo} alt={item.name} width={250} height={187} style={{ objectFit: "cover", width: "100%", height: "100%" }} onError={() => setPhotoError(true)} />
+          )}
         </div>
         <div className="item-card-body">
           <div className="item-card-top">
@@ -417,9 +422,7 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
             <button className="mobile-drawer-close" onClick={() => setDetail(null)} style={{ position: "absolute", top: 12, right: 12, zIndex: 1 }}>
               <Icon name="close" />
             </button>
-            <div style={{ width: "100%", aspectRatio: "4 / 3", overflow: "hidden", borderRadius: "14px 14px 0 0" }}>
-              <Image src={detail.urlPic ?? detail.photo} alt={detail.name} width={520} height={390} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
-            </div>
+            <DetailPhoto key={detail.id} item={detail} />
             <div style={{ padding: 24 }}>
               <h3 className="display-h4" style={{ margin: "0 0 8px 0" }}>{detail.name}</h3>
               {detail.tags && detail.tags.length > 0 && (
@@ -450,6 +453,19 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
         </div>
       )}
     </section>
+  );
+}
+
+function DetailPhoto({ item }: { item: ProductItem }) {
+  const [photoError, setPhotoError] = useState(false);
+  return (
+    <div style={{ width: "100%", aspectRatio: "4 / 3", overflow: "hidden", borderRadius: "14px 14px 0 0" }}>
+      {photoError ? (
+        <div className="photo-placeholder"><Icon name="photo" size={56} /></div>
+      ) : (
+        <Image src={item.urlPic ?? item.photo} alt={item.name} width={520} height={390} style={{ objectFit: "cover", width: "100%", height: "100%" }} onError={() => setPhotoError(true)} />
+      )}
+    </div>
   );
 }
 

@@ -7,6 +7,11 @@ const paths: Record<string, React.ReactNode> = {
   check: <path d="M3 8.5l3 3 7-7" {...stroke} />,
   close: <><path d="M3 3l10 10M13 3L3 13" {...stroke} /></>,
   cart: <><path d="M2 3h2l1.5 8h7L14 5H5" {...stroke} /><circle cx="6" cy="13.5" r="1" fill="currentColor"/><circle cx="11" cy="13.5" r="1" fill="currentColor"/></>,
+  photo: <>
+    <circle cx="8" cy="8.3" r="3.4" {...stroke} strokeWidth={1.2} />
+    <path d="M1.3 1.5v4.2M2.5 1.5v4.2M3.7 1.5v4.2M2.5 5.7v8.8" {...stroke} strokeWidth={1.1} />
+    <path d="M12.8 1.5c1.4 1 1.4 3.9 0 5.3M12.8 6.8v7.7" {...stroke} strokeWidth={1.1} />
+  </>,
 };
 
 export function Icon({ name, size = 16 }: { name: string; size?: number }) {
