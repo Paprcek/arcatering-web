@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const SITE_URL = "https://arcatering-web.vercel.app";
+const SITE_URL = "https://arcatering.cz";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -54,20 +54,20 @@ const jsonLd = {
         "Rodinný catering pro firemní akce v Praze a okolí. Specializace na školení, meetingy, klientské návštěvy a firemní oslavy. Na trhu od roku 2008.",
       foundingDate: "2008",
       slogan: "Občerstvení, které rozhodne o úspěchu vaší akce.",
-      telephone: "+420776123456",
+      telephone: "+420608833229",
       email: "poptavka@arcatering.cz",
       priceRange: "$$",
       address: {
         "@type": "PostalAddress",
-        streetAddress: "Křížíkova 16",
-        addressLocality: "Praha",
-        postalCode: "186 00",
+        streetAddress: "Bubenská 575/23",
+        addressLocality: "Praha 7 - Holešovice",
+        postalCode: "170 00",
         addressCountry: "CZ",
       },
       geo: {
         "@type": "GeoCoordinates",
-        latitude: 50.0942,
-        longitude: 14.4517,
+        latitude: 50.10198,
+        longitude: 14.43698,
       },
       areaServed: [
         { "@type": "City", name: "Praha" },
