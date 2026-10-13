@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getCatalog } from "@/lib/catalog";
 
 // Frontend posílá ISO ("2026-05-15T17:30" nebo "...Z"), Creator vyžaduje "dd-MMM-yyyy HH:mm:ss".
 // Parsujeme komponenty přímo ze stringu (bez TZ konverze), ať se zachová zadaný čas.
@@ -9,6 +10,23 @@ function toCreatorDateTime(iso?: string): string {
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const [, y, mo, d, hh, mm, ss] = m;
   return `${d}-${months[parseInt(mo, 10) - 1]}-${y} ${hh}:${mm}:${ss ?? "00"}`;
+}
+
+// Položky pod minimálním množstvím. Frontend je nepošle (košík minimum hlídá), tohle chytá
+// jen ručně poslané požadavky. Když katalog nejde načíst (Creator/kvóta), kontrolu
+// přeskočíme – objednávka kvůli validaci padat nesmí.
+async function itemsBelowMin(items: { id?: string; qty?: number }[]) {
+  let minById: Map<string, number>;
+  try {
+    const { categories } = await getCatalog();
+    minById = new Map(categories.flatMap((c) => c.items.map((i) => [i.id, i.min] as const)));
+  } catch (e) {
+    console.error("[quote] kontrola minima přeskočena, katalog nedostupný", e);
+    return [];
+  }
+  return items
+    .filter((it) => (it.qty ?? 0) < (minById.get(String(it.id)) ?? 1))
+    .map((it) => ({ id: it.id, qty: it.qty, min: minById.get(String(it.id)) }));
 }
 
 async function getAccessToken(): Promise<string> {
@@ -32,6 +50,12 @@ async function getAccessToken(): Promise<string> {
 export async function POST(request: Request) {
   try {
     const payload = await request.json();
+
+    const belowMin = await itemsBelowMin(payload.items ?? []);
+    if (belowMin.length > 0) {
+      return NextResponse.json({ ok: false, error: "min_qty", items: belowMin }, { status: 400 });
+    }
+
     const token = await getAccessToken();
 
     // Creator dropdown Delivery_Method má hodnoty "Delivery"/"Pickup" (velké

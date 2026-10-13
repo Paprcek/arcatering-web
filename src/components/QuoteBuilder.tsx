@@ -48,13 +48,19 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
   const total = cartList.reduce((s, it) => s + it.price * it.qty, 0);
   const itemCount = cartList.reduce((s, it) => s + it.qty, 0);
 
+  // Minimální množství položky (z Creatoru, viz minQty v lib/catalog.ts). Méně se objednat nedá:
+  // první přidání dá rovnou minimum, krok dolů pod minimum položku z košíku odebere.
+  const minOf = (id: string) => Math.max(1, allItems[id]?.min || 1);
   const setQty = (id: string, q: number) => setCart(c => {
     const n = { ...c };
-    if (q <= 0) delete n[id]; else n[id] = q;
+    if (q <= 0) delete n[id]; else n[id] = Math.max(q, minOf(id));
     return n;
   });
   const inc = (id: string) => setQty(id, (cart[id] || 0) + 1);
-  const dec = (id: string) => setQty(id, Math.max(0, (cart[id] || 0) - 1));
+  const dec = (id: string) => {
+    const next = (cart[id] || 0) - 1;
+    setQty(id, next < minOf(id) ? 0 : next);
+  };
 
   const filtered = (cat: Category) => {
     if (filter === "all") return cat.items;
@@ -121,6 +127,9 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
     return tag;
   };
 
+  // „min. 3 Ks“ – ukazuje se jen u položek s minimem nad 1
+  const minLabel = (item: ProductItem) => `min. ${item.min} ${item.unit}`;
+
   const ItemCard = ({ item }: { item: ProductItem }) => {
     const qty = cart[item.id] || 0;
     const shown = effectivePrice(item.price, pricing);
@@ -147,11 +156,11 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
             {priced ? (
               <div className="item-card-price">
                 {isDiscounted && <span className="price-original">{item.price} Kč</span>}
-                <b>{shown}</b><span className="csym"> Kč</span><span className="punit">/{item.unit}</span>
+                <b>{shown}</b><span className="csym"> Kč</span><span className="punit">/{item.unit}{item.min > 1 && ` · ${minLabel(item)}`}</span>
               </div>
             ) : (
               <div className="item-card-price item-card-price-empty">
-                <span className="punit">{lang === "cs" ? `min. ${item.min} ${item.unit}` : `min. ${item.min} ${item.unit}`}</span>
+                {item.min > 1 && <span className="punit">{minLabel(item)}</span>}
               </div>
             )}
             <Stepper qty={qty} onInc={() => inc(item.id)} onDec={() => dec(item.id)} addLabel={c.add} />
@@ -439,11 +448,11 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginTop: 8 }}>
                 {priced ? (
                   <div className="item-card-price">
-                    <b>{effectivePrice(detail.price, pricing)}</b><span className="csym"> Kč</span><span className="punit">/{detail.unit}</span>
+                    <b>{effectivePrice(detail.price, pricing)}</b><span className="csym"> Kč</span><span className="punit">/{detail.unit}{detail.min > 1 && ` · ${minLabel(detail)}`}</span>
                   </div>
                 ) : (
                   <div className="item-card-price item-card-price-empty">
-                    <span className="punit">{lang === "cs" ? `min. ${detail.min} ${detail.unit}` : `min. ${detail.min} ${detail.unit}`}</span>
+                    {detail.min > 1 && <span className="punit">{minLabel(detail)}</span>}
                   </div>
                 )}
                 <Stepper qty={cart[detail.id] || 0} onInc={() => inc(detail.id)} onDec={() => dec(detail.id)} addLabel={c.add} />
