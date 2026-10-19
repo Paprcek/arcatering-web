@@ -128,7 +128,7 @@ async function loadCatalog(): Promise<CatalogCategory[]> {
     from += limit;
   }
 
-  // Seskup podle kategorie, jen dostupné, seřaď podle Poradi
+  // Seskup podle kategorie, jen dostupné
   const byCat: Record<string, CatalogItem[]> = {};
   for (const r of records) {
     if (String(r.Dostupne) !== "true") continue;
@@ -155,12 +155,18 @@ async function loadCatalog(): Promise<CatalogCategory[]> {
     });
   }
 
-  return Object.keys(byCat).map((title) => ({
-    id: slug(title),
-    title,
-    subtitle: "",
-    items: byCat[title].sort((a, b) => a.order - b.order),
-  }));
+  // Pořadí podle ceníku: Poradi v Creatoru je číslo 1–262 přes celý ceník, takže řadí položky
+  // i kategorie (kategorie = nejnižší Poradi v ní). Položka bez Poradi (0) jde na konec.
+  const rank = (i: CatalogItem) => (i.order > 0 ? i.order : Number.MAX_SAFE_INTEGER);
+  const byRank = (a: CatalogItem, b: CatalogItem) => rank(a) - rank(b) || a.name.localeCompare(b.name, "cs");
+  return Object.keys(byCat)
+    .map((title) => ({
+      id: slug(title),
+      title,
+      subtitle: "",
+      items: byCat[title].sort(byRank),
+    }))
+    .sort((a, b) => rank(a.items[0]) - rank(b.items[0]) || a.title.localeCompare(b.title, "cs"));
 }
 
 // Katalog z paměti instance (max. 6 h starý), jinak čerstvě z Creatoru.

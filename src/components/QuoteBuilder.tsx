@@ -36,12 +36,14 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
   const isDiscounted = pricing.tier === "disc" && pricing.discount > 0;
 
   const allItems = useMemo(() => {
-    const m: Record<string, ProductItem & { catId: string; catTitle: string }> = {};
-    products.forEach(c => c.items.forEach(i => { m[i.id] = { ...i, catId: c.id, catTitle: c.title }; }));
+    const m: Record<string, ProductItem & { catId: string; catTitle: string; rank: number }> = {};
+    let rank = 0;
+    products.forEach(c => c.items.forEach(i => { m[i.id] = { ...i, catId: c.id, catTitle: c.title, rank: rank++ }; }));
     return m;
   }, [products]);
 
-  const cartList = Object.entries(cart).filter(([, q]) => q > 0).map(([id, q]) => {
+  // Košík (a tím i objednávka a šablona ve Writeru) v pořadí ceníku, ne v pořadí přidání
+  const cartList = Object.entries(cart).filter(([, q]) => q > 0).sort(([a], [b]) => allItems[a].rank - allItems[b].rank).map(([id, q]) => {
     const it = allItems[id];
     const price = effectivePrice(it.price, pricing);
     // cena je za balení (20ks, 1 000g), množství v ks/g → poměrná část, zaokrouhleno na Kč
