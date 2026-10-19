@@ -25,7 +25,12 @@ export interface CatalogItem {
   description: string;
   price: number;
   unit: string;
+  /** Množství v košíku je v jednotkách qtyUnit (ks/g), resp. v baleních, když je qtyUnit prázdné. */
   min: number;
+  step: number;
+  /** Kolik jednotek qtyUnit je v jednom balení z ceníku (20ks → 20, 1 000g → 1000; počítání v baleních → 1). */
+  pack: number;
+  qtyUnit: "ks" | "g" | "";
   tags: string[];
   allergens: string[];
   order: number;
@@ -46,16 +51,58 @@ export interface CatalogCategory {
 
 let cache: { categories: CatalogCategory[]; exp: number } | null = null;
 
-// Teplé pokrmy se objednávají minimálně po 3 porcích (požadavek Richarda 2026-10-13).
-const HOT_FOOD_CATEGORIES = ["Teplé pokrmy", "Vegetariánské teplé pokrmy"];
-const HOT_FOOD_MIN = 3;
+// Pravidla množství podle kategorie (Richard, 2026-10-14). Množství se počítá buď
+// v reálných jednotkách balení ("base": kanapky po kusech, mísy po gramech), nebo
+// v celých baleních/porcích ("pack": teplé pokrmy 3× 200g).
+//   min/step: číslo v jednotkách počítání, "pack" = velikost balení, "halfPack" = polovina
+interface QtyRule {
+  count: "base" | "pack";
+  min: number | "pack";
+  step: number | "pack" | "halfPack";
+}
+const BOWL: QtyRule = { count: "base", min: "pack", step: "halfPack" };
+const PORTION: QtyRule = { count: "pack", min: 3, step: 1 };
+const QTY_RULES: Record<string, QtyRule> = {
+  "Kanapky": { count: "base", min: 20, step: 5 },
+  "Studené finger food": { count: "base", min: 20, step: 5 },
+  "Minidezerty": { count: "base", min: "pack", step: "pack" },
+  "Zákusky": { count: "base", min: 5, step: 1 },
+  "Slavnostní zdobené mísy": BOWL,
+  "Salátové mísy": BOWL,
+  "Vegetariánské salátové mísy": BOWL,
+  "Ovocné mísy": BOWL,
+  "Teplé pokrmy": PORTION,
+  "Vegetariánské teplé pokrmy": PORTION,
+  "Přílohy": PORTION,
+};
 
-// Minimální množství položky: pole Min z Creatoru (číslo, příp. text typu "5ks"),
-// když chybí, u teplých pokrmů 3, jinak 1.
-export function minQty(rawMin: unknown, category: string): number {
-  const n = parseInt(String(rawMin ?? ""), 10);
-  if (n > 0) return n;
-  return HOT_FOOD_CATEGORIES.includes(category) ? HOT_FOOD_MIN : 1;
+// Balení z textu jednotky: "20ks" → 20 ks, "1 000g" (i s NBSP) → 1000 g, "Ks" → 1 ks.
+function parsePack(unit: string): { size: number; base: "ks" | "g" } | null {
+  const m = unit.replace(/[\s\u00a0]/g, "").toLowerCase().match(/^(\d*)(ks|g)$/);
+  if (!m) return null;
+  return { size: m[1] ? parseInt(m[1], 10) : 1, base: m[2] as "ks" | "g" };
+}
+
+// Jak se položka objednává: minimum, krok a v jakých jednotkách. Pole Min z Creatoru
+// (v jednotkách počítání, tj. ks/g/porce) přepisuje minimum z pravidla.
+// Bez pravidla: kusové balení (10ks) po celých baleních v kusech, ostatní po 1.
+export function qtyRule(unit: string, rawMin: unknown, category: string) {
+  const pack = parsePack(unit);
+  let rule = QTY_RULES[category];
+  if (!rule) rule = pack?.base === "ks" ? { count: "base", min: "pack", step: "pack" } : { count: "pack", min: 1, step: 1 };
+  // mísa s nečitelnou jednotkou → aspoň po celých kusech
+  if (rule.count === "base" && !pack) rule = { count: "pack", min: 1, step: 1 };
+
+  const size = rule.count === "base" && pack ? pack.size : 1;
+  const resolve = (v: number | "pack" | "halfPack") =>
+    v === "pack" ? size : v === "halfPack" ? Math.max(1, Math.round(size / 2)) : v;
+  const fromCreator = parseInt(String(rawMin ?? ""), 10);
+  return {
+    min: Math.max(1, fromCreator > 0 ? fromCreator : resolve(rule.min)),
+    step: Math.max(1, resolve(rule.step)),
+    pack: size,
+    qtyUnit: rule.count === "base" && pack ? pack.base : ("" as const),
+  };
 }
 
 async function loadCatalog(): Promise<CatalogCategory[]> {
@@ -101,7 +148,7 @@ async function loadCatalog(): Promise<CatalogCategory[]> {
       description: (r.Popis as string) ?? "",
       price: parseFloat(r.Cena as string) || 0,
       unit: (r.Jednotka as string) ?? "",
-      min: minQty(r.Min, cat),
+      ...qtyRule((r.Jednotka as string) ?? "", r.Min, cat),
       tags: toList(r.Tagy),
       allergens: toList(r.Alergeny),
       order: parseInt(r.Poradi as string, 10) || 0,

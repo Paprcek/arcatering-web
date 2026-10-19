@@ -7,6 +7,10 @@ export interface ProductItem {
   price: number;
   unit: string;
   min: number;
+  /** Krok, balení a jednotka počítání – viz qtyRule v lib/catalog.ts (hardcoded data je nemají → po 1 balení). */
+  step?: number;
+  pack?: number;
+  qtyUnit?: "ks" | "g" | "";
   tags: string[];
   /** Popis a alergeny z Creatoru (volitelné – hardcoded data je nemají). */
   description?: string;

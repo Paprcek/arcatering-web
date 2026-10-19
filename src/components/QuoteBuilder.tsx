@@ -43,22 +43,31 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
 
   const cartList = Object.entries(cart).filter(([, q]) => q > 0).map(([id, q]) => {
     const it = allItems[id];
-    return { ...it, qty: q, basePrice: it.price, price: effectivePrice(it.price, pricing) };
+    const price = effectivePrice(it.price, pricing);
+    // cena je za balení (20ks, 1 000g), množství v ks/g → poměrná část, zaokrouhleno na Kč
+    return { ...it, qty: q, basePrice: it.price, price, lineTotal: Math.round(price * q / (it.pack || 1)) };
   });
-  const total = cartList.reduce((s, it) => s + it.price * it.qty, 0);
-  const itemCount = cartList.reduce((s, it) => s + it.qty, 0);
+  const total = cartList.reduce((s, it) => s + it.lineTotal, 0);
+  const itemCount = cartList.length;
 
-  // Minimální množství položky (z Creatoru, viz minQty v lib/catalog.ts). Méně se objednat nedá:
-  // první přidání dá rovnou minimum, krok dolů pod minimum položku z košíku odebere.
+  // Minimum a krok položky (viz qtyRule v lib/catalog.ts). Méně se objednat nedá:
+  // první přidání dá rovnou minimum, pak se přidává po kroku (kanapky po 5 ks, mísy
+  // po půlce gramáže), krok dolů pod minimum položku z košíku odebere.
   const minOf = (id: string) => Math.max(1, allItems[id]?.min || 1);
+  const stepOf = (id: string) => Math.max(1, allItems[id]?.step || 1);
   const setQty = (id: string, q: number) => setCart(c => {
     const n = { ...c };
-    if (q <= 0) delete n[id]; else n[id] = Math.max(q, minOf(id));
+    if (q <= 0) delete n[id];
+    else {
+      // zarovnat na min + k × krok (nahoru), ať jde jen povolené množství
+      const min = minOf(id), step = stepOf(id);
+      n[id] = q <= min ? min : min + Math.ceil((q - min) / step) * step;
+    }
     return n;
   });
-  const inc = (id: string) => setQty(id, (cart[id] || 0) + 1);
+  const inc = (id: string) => setQty(id, cart[id] ? cart[id] + stepOf(id) : minOf(id));
   const dec = (id: string) => {
-    const next = (cart[id] || 0) - 1;
+    const next = (cart[id] || 0) - stepOf(id);
     setQty(id, next < minOf(id) ? 0 : next);
   };
 
@@ -82,7 +91,10 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
         name: it.name,
         category: it.catTitle,
         qty: it.qty,
+        // qty je v qtyUnit (ks/g); prázdné = počet balení/porcí jako dřív
+        qtyUnit: it.qtyUnit || "",
         price: priced ? it.price : null,
+        lineTotal: priced ? it.lineTotal : null,
         basePrice: it.basePrice,
         unit: it.unit,
       })),
@@ -127,8 +139,23 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
     return tag;
   };
 
-  // „min. 3 Ks“ – ukazuje se jen u položek s minimem nad 1
-  const minLabel = (item: ProductItem) => `min. ${item.min} ${item.unit}`;
+  const fmt = (n: number) => n.toLocaleString(lang === "cs" ? "cs-CZ" : "en-US");
+
+  // Množství s jednotkou: „25 ks“, „1 500 g“; u počítání v porcích jen číslo
+  const qtyText = (item: ProductItem, q: number) => {
+    if (!item.qtyUnit) return fmt(q);
+    const u = lang === "cs" || item.qtyUnit === "g" ? item.qtyUnit : "pcs";
+    return `${fmt(q)}\u00a0${u}`; // nedělitelná mezera, ať se „1 000 g“ nezalomí
+  };
+  // „min. 20 ks, po 5 ks“ / „min. 3 porce“ – jen u položek s minimem nebo krokem nad 1
+  const hasMinLabel = (item: ProductItem) => item.min > 1 || (item.step ?? 1) > 1;
+  const minLabel = (item: ProductItem) => {
+    const cs = lang === "cs";
+    const min = item.qtyUnit ? qtyText(item, item.min) : `${item.min} ${cs ? "porce" : "portions"}`;
+    const step = item.step ?? 1;
+    if (step <= 1 || step === item.min) return `min. ${min}`;
+    return `min. ${min}, ${cs ? "po" : "in steps of"} ${qtyText(item, step)}`;
+  };
 
   const ItemCard = ({ item }: { item: ProductItem }) => {
     const qty = cart[item.id] || 0;
@@ -156,21 +183,19 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
             {priced ? (
               <div className="item-card-price">
                 {isDiscounted && <span className="price-original">{item.price} Kč</span>}
-                <b>{shown}</b><span className="csym"> Kč</span><span className="punit">/{item.unit}{item.min > 1 && ` · ${minLabel(item)}`}</span>
+                <b>{shown}</b><span className="csym"> Kč</span><span className="punit">/{item.unit}{hasMinLabel(item) && ` · ${minLabel(item)}`}</span>
               </div>
             ) : (
               <div className="item-card-price item-card-price-empty">
-                {item.min > 1 && <span className="punit">{minLabel(item)}</span>}
+                {hasMinLabel(item) && <span className="punit">{minLabel(item)}</span>}
               </div>
             )}
-            <Stepper qty={qty} onInc={() => inc(item.id)} onDec={() => dec(item.id)} addLabel={c.add} />
+            <Stepper qty={qty} label={qtyText(item, qty)} onInc={() => inc(item.id)} onDec={() => dec(item.id)} addLabel={c.add} />
           </div>
         </div>
       </div>
     );
   };
-
-  const fmt = (n: number) => n.toLocaleString(lang === "cs" ? "cs-CZ" : "en-US");
 
   const cartContents = (
     <>
@@ -202,16 +227,16 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
                       <div className="cart-item-line">
                         {priced ? (
                           <>
-                            <span>{it.qty} × {it.price} Kč</span>
-                            <b>{fmt(it.qty * it.price)} Kč</b>
+                            <span>{(it.pack ?? 1) > 1 ? `${qtyText(it, it.qty)} · ${it.price} Kč/${it.unit}` : `${it.qty} × ${it.price} Kč`}</span>
+                            <b>{fmt(it.lineTotal)} Kč</b>
                           </>
                         ) : (
-                          <span>{it.qty} {it.unit}</span>
+                          <span>{it.qtyUnit ? qtyText(it, it.qty) : `${it.qty} × ${it.unit}`}</span>
                         )}
                       </div>
                     </div>
                     <div className="cart-item-ctrls">
-                      <Stepper qty={it.qty} onInc={() => inc(it.id)} onDec={() => dec(it.id)} addLabel={c.add} />
+                      <Stepper qty={it.qty} label={qtyText(it, it.qty)} onInc={() => inc(it.id)} onDec={() => dec(it.id)} addLabel={c.add} />
                       <button className="cart-item-x" onClick={() => setQty(it.id, 0)} title={c.remove}><Icon name="close" size={11} /></button>
                     </div>
                   </li>
@@ -448,14 +473,14 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginTop: 8 }}>
                 {priced ? (
                   <div className="item-card-price">
-                    <b>{effectivePrice(detail.price, pricing)}</b><span className="csym"> Kč</span><span className="punit">/{detail.unit}{detail.min > 1 && ` · ${minLabel(detail)}`}</span>
+                    <b>{effectivePrice(detail.price, pricing)}</b><span className="csym"> Kč</span><span className="punit">/{detail.unit}{hasMinLabel(detail) && ` · ${minLabel(detail)}`}</span>
                   </div>
                 ) : (
                   <div className="item-card-price item-card-price-empty">
-                    {detail.min > 1 && <span className="punit">{minLabel(detail)}</span>}
+                    {hasMinLabel(detail) && <span className="punit">{minLabel(detail)}</span>}
                   </div>
                 )}
-                <Stepper qty={cart[detail.id] || 0} onInc={() => inc(detail.id)} onDec={() => dec(detail.id)} addLabel={c.add} />
+                <Stepper qty={cart[detail.id] || 0} label={qtyText(detail, cart[detail.id] || 0)} onInc={() => inc(detail.id)} onDec={() => dec(detail.id)} addLabel={c.add} />
               </div>
             </div>
           </div>
@@ -478,14 +503,14 @@ function DetailPhoto({ item }: { item: ProductItem }) {
   );
 }
 
-function Stepper({ qty, onInc, onDec, addLabel }: { qty: number; onInc: () => void; onDec: () => void; addLabel: string }) {
+function Stepper({ qty, label, onInc, onDec, addLabel }: { qty: number; label: string; onInc: () => void; onDec: () => void; addLabel: string }) {
   if (qty === 0) {
     return <button className="add-btn" onClick={onInc}><Icon name="plus" size={12} /><span>{addLabel}</span></button>;
   }
   return (
     <div className="stepper">
       <button onClick={onDec}><Icon name="minus" size={12} /></button>
-      <span className="stepper-qty">{qty}</span>
+      <span className="stepper-qty">{label}</span>
       <button onClick={onInc}><Icon name="plus" size={12} /></button>
     </div>
   );

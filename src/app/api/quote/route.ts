@@ -12,21 +12,25 @@ function toCreatorDateTime(iso?: string): string {
   return `${d}-${months[parseInt(mo, 10) - 1]}-${y} ${hh}:${mm}:${ss ?? "00"}`;
 }
 
-// Položky pod minimálním množstvím. Frontend je nepošle (košík minimum hlídá), tohle chytá
-// jen ručně poslané požadavky. Když katalog nejde načíst (Creator/kvóta), kontrolu
-// přeskočíme – objednávka kvůli validaci padat nesmí.
-async function itemsBelowMin(items: { id?: string; qty?: number }[]) {
-  let minById: Map<string, number>;
+// Položky pod minimem nebo mimo krok (kanapky 20, 25, 30…). Frontend je nepošle (košík to
+// hlídá), tohle chytá jen ručně poslané požadavky. Když katalog nejde načíst (Creator/kvóta),
+// kontrolu přeskočíme – objednávka kvůli validaci padat nesmí.
+async function itemsInvalidQty(items: { id?: string; qty?: number }[]) {
+  let ruleById: Map<string, { min: number; step: number }>;
   try {
     const { categories } = await getCatalog();
-    minById = new Map(categories.flatMap((c) => c.items.map((i) => [i.id, i.min] as const)));
+    ruleById = new Map(categories.flatMap((c) => c.items.map((i) => [i.id, { min: i.min, step: i.step }] as const)));
   } catch (e) {
-    console.error("[quote] kontrola minima přeskočena, katalog nedostupný", e);
+    console.error("[quote] kontrola množství přeskočena, katalog nedostupný", e);
     return [];
   }
   return items
-    .filter((it) => (it.qty ?? 0) < (minById.get(String(it.id)) ?? 1))
-    .map((it) => ({ id: it.id, qty: it.qty, min: minById.get(String(it.id)) }));
+    .map((it) => ({ it, rule: ruleById.get(String(it.id)) ?? { min: 1, step: 1 } }))
+    .filter(({ it, rule }) => {
+      const q = it.qty ?? 0;
+      return q < rule.min || (q - rule.min) % rule.step !== 0;
+    })
+    .map(({ it, rule }) => ({ id: it.id, qty: it.qty, min: rule.min, step: rule.step }));
 }
 
 async function getAccessToken(): Promise<string> {
@@ -51,9 +55,9 @@ export async function POST(request: Request) {
   try {
     const payload = await request.json();
 
-    const belowMin = await itemsBelowMin(payload.items ?? []);
-    if (belowMin.length > 0) {
-      return NextResponse.json({ ok: false, error: "min_qty", items: belowMin }, { status: 400 });
+    const invalidQty = await itemsInvalidQty(payload.items ?? []);
+    if (invalidQty.length > 0) {
+      return NextResponse.json({ ok: false, error: "min_qty", items: invalidQty }, { status: 400 });
     }
 
     const token = await getAccessToken();
