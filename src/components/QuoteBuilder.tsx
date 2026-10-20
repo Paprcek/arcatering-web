@@ -138,6 +138,9 @@ export function QuoteBuilder({ copy, products, lang, pricing }: QuoteBuilderProp
     if (tag === "vegan") return "Vegan";
     if (tag === "fish" || tag === "ryba") return lang === "cs" ? "Ryba" : "Fish";
     if (tag === "bezlepkové" || tag === "gluten-free") return lang === "cs" ? "Bezlep." : "GF";
+    if (tag === "kuřecí") return lang === "cs" ? "Kuřecí" : "Chicken";
+    if (tag === "hovězí") return lang === "cs" ? "Hovězí" : "Beef";
+    if (tag === "vepřový") return lang === "cs" ? "Vepřové" : "Pork";
     return tag;
   };
 
