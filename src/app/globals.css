@@ -318,6 +318,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .tags { display: inline-flex; gap: 4px; flex-wrap: wrap; }
 .tag { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.06em; text-transform: uppercase; background: var(--chip-bg); color: var(--accent-deep); padding: 3px 7px; border-radius: 4px; font-weight: 600; }
 .item-card-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: auto; gap: 8px; }
+/* stepper s jednotkou (1 500 g) se nesmí smrsknout – radši ať se zalomí text ceny */
+.item-card-bottom .stepper, .item-card-bottom .add-btn { flex-shrink: 0; }
 .item-card-price { display: inline-flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
 .item-card-price b { font-family: var(--display); font-size: 22px; font-weight: 700; color: var(--fg); }
 .item-card-price-empty { color: var(--muted); }
@@ -338,7 +340,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .stepper { display: inline-flex; align-items: center; border: 1.5px solid var(--accent); border-radius: 6px; background: var(--card); overflow: hidden; }
 .stepper button { border: 0; background: transparent; padding: 6px 9px; color: var(--accent-deep); display: inline-flex; align-items: center; }
 .stepper button:hover { background: var(--accent); color: var(--accent-ink); }
-.stepper-qty { min-width: 22px; text-align: center; font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--fg); }
+.stepper-qty { min-width: 22px; text-align: center; white-space: nowrap; font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--fg); }
 
 /* Drawer */
 .quote-drawer { position: sticky; top: 80px; z-index: 3; align-self: start; max-height: calc(100vh - 100px); overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: var(--card); display: flex; flex-direction: column; box-shadow: 0 4px 16px rgba(0,0,0,.04); }

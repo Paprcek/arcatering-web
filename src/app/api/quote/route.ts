@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getCatalog } from "@/lib/catalog";
 
 // Frontend posílá ISO ("2026-05-15T17:30" nebo "...Z"), Creator vyžaduje "dd-MMM-yyyy HH:mm:ss".
 // Parsujeme komponenty přímo ze stringu (bez TZ konverze), ať se zachová zadaný čas.
@@ -9,6 +10,27 @@ function toCreatorDateTime(iso?: string): string {
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const [, y, mo, d, hh, mm, ss] = m;
   return `${d}-${months[parseInt(mo, 10) - 1]}-${y} ${hh}:${mm}:${ss ?? "00"}`;
+}
+
+// Položky pod minimem nebo mimo krok (kanapky 20, 25, 30…). Frontend je nepošle (košík to
+// hlídá), tohle chytá jen ručně poslané požadavky. Když katalog nejde načíst (Creator/kvóta),
+// kontrolu přeskočíme – objednávka kvůli validaci padat nesmí.
+async function itemsInvalidQty(items: { id?: string; qty?: number }[]) {
+  let ruleById: Map<string, { min: number; step: number }>;
+  try {
+    const { categories } = await getCatalog();
+    ruleById = new Map(categories.flatMap((c) => c.items.map((i) => [i.id, { min: i.min, step: i.step }] as const)));
+  } catch (e) {
+    console.error("[quote] kontrola množství přeskočena, katalog nedostupný", e);
+    return [];
+  }
+  return items
+    .map((it) => ({ it, rule: ruleById.get(String(it.id)) ?? { min: 1, step: 1 } }))
+    .filter(({ it, rule }) => {
+      const q = it.qty ?? 0;
+      return q < rule.min || (q - rule.min) % rule.step !== 0;
+    })
+    .map(({ it, rule }) => ({ id: it.id, qty: it.qty, min: rule.min, step: rule.step }));
 }
 
 async function getAccessToken(): Promise<string> {
@@ -32,6 +54,12 @@ async function getAccessToken(): Promise<string> {
 export async function POST(request: Request) {
   try {
     const payload = await request.json();
+
+    const invalidQty = await itemsInvalidQty(payload.items ?? []);
+    if (invalidQty.length > 0) {
+      return NextResponse.json({ ok: false, error: "min_qty", items: invalidQty }, { status: 400 });
+    }
+
     const token = await getAccessToken();
 
     // Creator dropdown Delivery_Method má hodnoty "Delivery"/"Pickup" (velké
